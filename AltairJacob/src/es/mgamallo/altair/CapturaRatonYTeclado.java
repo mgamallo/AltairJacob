@@ -10,6 +10,7 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.rmi.MarshalledObject;
 import java.sql.Time;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -26,19 +27,9 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseInputListener;
 import org.jnativehook.mouse.NativeMouseListener;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.google.common.base.Function;
+import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 
 
 public class CapturaRatonYTeclado implements NativeKeyListener,
@@ -133,30 +124,30 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 		 System.out.println("Tecla ... " + ((char) e.getKeyCode()));
 
 		 	if(e.getKeyCode() == 129){   	// ç
-		 		if(InicioSeleniumIexplorer.xedoc1Activo){
+		 		if(InicioAltairJacob.xedoc1Activo){
 
 		 			
-		 			WebElement enviar = InicioSeleniumIexplorer.driverBandejaXedoc.findElement(By.id("submitFormFirmar")); 
-		 			enviar.click();
+		 		//	WebElement enviar = InicioAltairJacob.driverBandejaXedoc.findElement(By.id("submitFormFirmar")); 
+		 		//	enviar.click();
 		 			
 		 		}
 		 		else{
 		 			
-		 			WebElement enviar = InicioSeleniumIexplorer.driverBandejaXedoc.findElement(By.id("submitFormFirmar")); 
-		 			enviar.click();
+		 		//	WebElement enviar = InicioAltairJacob.driverBandejaXedoc.findElement(By.id("submitFormFirmar")); 
+		 		//	enviar.click();
 		 			
 
 		 		}
 		 	}
 		 
-		 
+		 /*
 		 	if(e.getKeyCode() == 92){   	// º
-		 		if(InicioSeleniumIexplorer.xedoc1Activo){
+		 		if(InicioAltairJacob.xedoc1Activo){
 		 			
-		 			WebDriverWait wait = new WebDriverWait(InicioSeleniumIexplorer.driverBandejaXedoc, 1);
+		 			WebDriverWait wait = new WebDriverWait(InicioAltairJacob.driverBandejaXedoc, 1);
 		 			try{
 		 			    wait.until(ExpectedConditions.alertIsPresent());
-		 			    Alert alert = InicioSeleniumIexplorer.driverBandejaXedoc.switchTo().alert();
+		 			    Alert alert = InicioAltairJacob.driverBandejaXedoc.switchTo().alert();
 		 			    alert.accept();
 		 			}
 		 			catch(Exception ev){
@@ -166,10 +157,10 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 		 		}
 		 		else{
 		 			
-		 			WebDriverWait wait = new WebDriverWait(InicioSeleniumIexplorer.driverXedoc2, 0);
+		 			WebDriverWait wait = new WebDriverWait(InicioAltairJacob.driverXedoc2, 0);
 		 			try{
 		 			    wait.until(ExpectedConditions.alertIsPresent());
-		 			    Alert alert = InicioSeleniumIexplorer.driverXedoc2.switchTo().alert();
+		 			    Alert alert = InicioAltairJacob.driverXedoc2.switchTo().alert();
 		 			    alert.accept();
 		 			}
 		 			catch(Exception ev){
@@ -178,17 +169,20 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 		 			}
 
 		 		}
+		 		
 		 	}
-
+		*/
+		 	
+		 	
 			if(e.getKeyCode() == 106){		// *
 				
-				if(InicioSeleniumIexplorer.xedoc1Activo){
-					InicioSeleniumIexplorer.ventana.jBxedoc1.setBackground(Color.green);
-					InicioSeleniumIexplorer.ventana.gestionXedoc1();
-					InicioSeleniumIexplorer.ventana.jBxedoc2.setBackground(Color.gray);
-					InicioSeleniumIexplorer.ventana.gestionXedoc2();
+				if(InicioAltairJacob.xedoc1Activo){
+					InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.green);
+					InicioAltairJacob.ventana.gestionXedoc1();
+					InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.gray);
+					InicioAltairJacob.ventana.gestionXedoc2();
 					
-					/*
+					
 					Robot robot;
 					try {
 						robot = new Robot();
@@ -196,7 +190,7 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						Point p = MouseInfo.getPointerInfo().getLocation();
 																
 						robot.delay(300);
-						robot.mouseMove(40, 15);
+						robot.mouseMove(1600, 200);
 						robot.mousePress(InputEvent.BUTTON1_MASK);
 						robot.mouseRelease(InputEvent.BUTTON1_MASK);
 						robot.delay(200);
@@ -206,43 +200,42 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					*/
 					
-					habilitarJava();
 					
-					WebElement aceptar = null;
-				
+			//		habilitarJava();
 					
+					System.out.println("Xedoc1Activo... ");
+
 					boolean masDocumentos = true;
-					
-					try {
-						aceptar = InicioSeleniumIexplorer.driverXedoc2.findElement(By.id("submitFormFirmar"));
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						//e1.printStackTrace();
-						masDocumentos = false;
+				
+					Dispatch documento = Dispatch.call(InicioAltairJacob.xedoc2, "document").toDispatch();
+					Variant masElementos = Dispatch.call(documento, "getElementById","submitFormFirmar");
+					System.out.println("Nodo cex " + masElementos.toString());
+					if(masElementos.toString().equals("null")){
 						System.out.println("No hay mas documentos de Xedoc 2.");
+						masDocumentos = false;
 					}
-					
+										
 					if(masDocumentos){
-						JavascriptExecutor js = (JavascriptExecutor) InicioSeleniumIexplorer.driverXedoc2;
-						js.executeScript("arguments[0].focus();",aceptar);
-					
+						
+						Dispatch submitFormFirmar = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
+						Dispatch.call(submitFormFirmar,"focus");
+						System.out.println("Ponemos el foco en Xedoc 2");
 					}
 					
-					
-					InicioSeleniumIexplorer.xedoc1Activo = false;
-					GestionXedocSelenium.carganuevoPdf(InicioSeleniumIexplorer.driverBandejaXedoc, "Xedoc 1");
+					System.out.println("Empezamos a cargar xedoc 1");
+					InicioAltairJacob.xedoc1Activo = false;
+					GestionXedoc.carganuevoPdf(InicioAltairJacob.xedoc1, "Xedoc 1");
 					
 				}
 				else{
-					InicioSeleniumIexplorer.ventana.jBxedoc2.setBackground(Color.green);
-					InicioSeleniumIexplorer.ventana.gestionXedoc2();
-					InicioSeleniumIexplorer.ventana.jBxedoc1.setBackground(Color.gray);
-					InicioSeleniumIexplorer.ventana.gestionXedoc1();
+					InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.green);
+					InicioAltairJacob.ventana.gestionXedoc2();
+					InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.gray);
+					InicioAltairJacob.ventana.gestionXedoc1();
 					
 					
-					/*
+					
 					Robot robot;
 					try {
 						robot = new Robot();
@@ -250,7 +243,7 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						Point p = MouseInfo.getPointerInfo().getLocation();
 																
 						robot.delay(300);
-						robot.mouseMove(40, 15);
+						robot.mouseMove(1600, 200);
 						robot.mousePress(InputEvent.BUTTON1_MASK);
 						robot.mouseRelease(InputEvent.BUTTON1_MASK);
 						robot.delay(200);
@@ -260,37 +253,29 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					*/
 					
 					
-					habilitarJava();
-					
-					
-					
-					WebElement aceptar = null;
-				
+					System.out.println("Xedoc1Activo false... ");
 					
 					boolean masDocumentos = true;
 					
-					try {
-						aceptar = InicioSeleniumIexplorer.driverBandejaXedoc.findElement(By.id("submitFormFirmar"));
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						//e1.printStackTrace();
-						masDocumentos = false;
+					Dispatch documento = Dispatch.call(InicioAltairJacob.xedoc1, "document").toDispatch();
+					Variant masElementos = Dispatch.call(documento, "getElementById","submitFormFirmar");
+					System.out.println("Nodo cex " + masElementos.toString());
+					if(masElementos.toString().equals("null")){
 						System.out.println("No hay mas documentos de Xedoc 1.");
+						masDocumentos = false;
 					}
-					
+										
 					if(masDocumentos){
-						JavascriptExecutor js = (JavascriptExecutor) InicioSeleniumIexplorer.driverBandejaXedoc;
-						js.executeScript("arguments[0].focus();",aceptar);
-					
+						System.out.println("Ponemos el foco en Xedoc 1");
+						Dispatch submitFormFirmar = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
+						Dispatch.call(submitFormFirmar,"focus");
 					}
 					
-
-					
-					InicioSeleniumIexplorer.xedoc1Activo = true;
-					GestionXedocSelenium.carganuevoPdf(InicioSeleniumIexplorer.driverXedoc2, "Xedoc 2");
+					System.out.println("Empezamos a cargar xedoc 2");
+					InicioAltairJacob.xedoc1Activo = true;
+					GestionXedoc.carganuevoPdf(InicioAltairJacob.xedoc2, "Xedoc 2");
 					
 				}
 				
@@ -409,76 +394,6 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 
 	
 
-	
-	
-	static public void habilitarJava(){
-		Robot robot;
-		try {
-			robot = new Robot();
-			
-			java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
-													
-			robot.delay(300);
-			robot.mouseMove(40, 15);
-			robot.mousePress(InputEvent.BUTTON1_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_MASK);
-			robot.delay(200);
-			robot.mouseMove(p.x, p.y);
-			
-		} catch (AWTException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		java.awt.Point barraAviso;
-		java.awt.Point recordarAviso; 
-		
-		barraAviso = InicioSeleniumIexplorer.barraAviso;
-		recordarAviso = InicioSeleniumIexplorer.recordarAviso;
-		
-		Robot robotPlugin;
-
-			try {
-				robotPlugin = new Robot();
-				Color color = robotPlugin.getPixelColor(barraAviso.x,barraAviso.y);
-				
-//	robotPlugin.delay(3000);
-				
-				System.out.println(Integer.toHexString(color.getRGB()));
-				String codigoColor = Integer.toHexString(color.getRGB());
-				if(codigoColor.equals("ffd4d0c8") || codigoColor.equals("fff0f0f0")){
-					robotPlugin.mouseMove(barraAviso.x, barraAviso.y);
-					robotPlugin.mousePress(InputEvent.BUTTON1_MASK);
-					robotPlugin.mouseRelease(InputEvent.BUTTON1_MASK);
-					
-					robotPlugin.delay(500);
-					
-					robotPlugin.mouseMove(recordarAviso.x, recordarAviso.y);
-					robotPlugin.mousePress(InputEvent.BUTTON1_MASK);
-					robotPlugin.mouseRelease(InputEvent.BUTTON1_MASK);
-					
-					robotPlugin.delay(400);
-					
-					robotPlugin.keyPress(KeyEvent.VK_UP);
-					robotPlugin.keyRelease(KeyEvent.VK_UP);
-					robotPlugin.delay(100);
-					robotPlugin.keyPress(KeyEvent.VK_ENTER);
-					robotPlugin.keyRelease(KeyEvent.VK_ENTER);
-					robotPlugin.delay(100);
-					robotPlugin.keyPress(KeyEvent.VK_ENTER);
-					robotPlugin.keyRelease(KeyEvent.VK_ENTER);
-
-					robotPlugin.delay(200);
-				}
-			} catch (AWTException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		}
-	
-
-	
 	
 
 	

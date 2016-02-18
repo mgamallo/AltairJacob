@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 
 
 import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 
 
 
@@ -47,7 +48,7 @@ public class VentanaControlXedoc extends JFrame{
 	JButton jBpdf2 = new JButton("Recargar Xedoc 2");
 	JButton jBsalir = new JButton("Salir");
 	JButton jBpegarTitulo = new JButton("Pegar Titulo");
-	JButton jBmaquetarXedoc1 = new JButton("Maquetar 1");
+	JButton jBmaquetarXedoc1 = new JButton("Maquetar");
 	JButton jBmaquetarXedoc2 = new JButton("Maquetar 2");
 	JButton jBrecargarArbol = new JButton("Recargar árbol");
 	JButton jBsaltarPdf = new JButton("Saltar pdf");
@@ -123,9 +124,9 @@ public class VentanaControlXedoc extends JFrame{
 		Dispatch filas = Dispatch.call(row, "getElementsByTagName","tr").getDispatch();
 		int numeroFilas = Integer.parseInt(Dispatch.get(filas, "length").toString()) - 1;
 		
-		System.out.println(numeroFilas);
+	//	System.out.println(numeroFilas);
 		
-		System.out.println("El número de filas es... " + numeroFilas);
+	//	System.out.println("El número de filas es... " + numeroFilas);
 		
 		for(int i=0;i<numeroFilas;i++){
 			comboInicio.addItem(String.valueOf(i+1));
@@ -190,26 +191,21 @@ public class VentanaControlXedoc extends JFrame{
 				
 				GestionXedoc.insertarCodigoBandeja("Bandeja Xedoc 1", pdfSeleccionado, pdfSeleccionado + 1);
 				
-				/*
-				
-				System.out.println("Inicializa bandejas xedoc.");
-				
-				int pdfSeleccionado = comboInicio.getSelectedIndex();
-				
-				// pdfSeleccionado = 1;
-				
-				System.out.println("Seleccionado el pdf numero ... " + (pdfSeleccionado + 1) );
-				
-			//	GestionJacobXedoc.capturaBandeja(bandejaXedoc1, xedoc2, "Xedoc 1", "Xedoc 2", pdfSeleccionado, pdfSeleccionado + 1);
-			InicioAltairJacob.insertarCodigoBandeja("Bandeja Xedoc 1", pdfSeleccionado, pdfSeleccionado +1 );					
-				
-			xedoc1inicializado = true;
+				xedoc1inicializado = true;
 				
 				jBmaquetar.setBackground(Color.green);
 				jBiniciar.setBackground(Color.DARK_GRAY);
 				jBiniciar.setEnabled(false);
 				
-				*/
+				
+				jBxedoc1.setBackground(Color.green);
+				
+				Dispatch.put(InicioAltairJacob.xedoc2, "visible","false");
+				jBxedoc2.setBackground(Color.gray);
+				Dispatch.put(InicioAltairJacob.bandejaXedoc, "visible","false");
+				jBbandeja1.setBackground(Color.gray);
+				
+				panelMover.setBackground(Color.green);
 			}
 		});
 
@@ -263,44 +259,25 @@ public class VentanaControlXedoc extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-			/*	
-			bandejaXedoc1.switchTo().window(InicioAltairJacob.nombreVentanaBandejaXedoc);
-	
 				
-			if(jBbandeja1.getBackground() == Color.GRAY){
-			//	Dispatch.put(GestionJacobXedoc.bandejaXedoc1, "visible","true");
-				Point punto;
+				if(xedoc1inicializado){
+					if(jBbandeja1.getBackground() != Color.GRAY){
+						Dispatch.put(InicioAltairJacob.bandejaXedoc, "visible","false");
+						jBbandeja1.setBackground(Color.gray);
 
-				punto = new Point(0,0);
+					}
+					else{
+						Dispatch.put(InicioAltairJacob.bandejaXedoc, "visible","true");
+						jBbandeja1.setBackground(Color.green);
 
-				
-				bandejaXedoc1.manage().window().setPosition(punto);
-				bandejaXedoc1.manage().window().maximize();
-				
-				jBbandeja1.setBackground(Color.green);
-			}
-			else{
-			//	Dispatch.put(GestionJacobXedoc.bandejaXedoc1, "visible","false");
-				
-				Point punto;
-				if(InicioAltairJacob.numeroPantallas == 2){
-					punto = new Point(1050,1260);
+					}
+						
 				}
-				else{
-					punto = new Point(1050,1260);
-				}
-				
-				bandejaXedoc1.manage().window().setPosition(punto);
-				jBbandeja1.setBackground(Color.GRAY);
-			}
-			
-			bandejaXedoc1.switchTo().window(InicioAltairJacob.nombreVentanaXedoc1);				
-				*/
 			}
 		});
 		
 				
-		jBprometeo.setVisible(false);
+		jBprometeo.setVisible(true);
 		jBprometeo.setBackground(Color.darkGray);
 		jBprometeo.addActionListener(new ActionListener() {
 			
@@ -358,6 +335,13 @@ public class VentanaControlXedoc extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				
+				Variant visible = Dispatch.get(InicioAltairJacob.xedoc1, "visible");
+				System.out.println(visible.toString());
+				
+			//	new MaquetadoXedoc(InicioAltairJacob.xedoc1, "Xedoc 1", false);
+				
+				
 				/*
 				if(jBmaquetar.getBackground() == Color.GRAY){
 					jBmaquetar.setBackground(Color.green);
@@ -404,9 +388,18 @@ public class VentanaControlXedoc extends JFrame{
 					Cerrar.cerrarIexplorer();
 				}
 				
-			//	Inicio.panelPrincipal.frame.setVisible(true);
-				System.exit(0);
-				dispose();
+				try {
+					Dispatch.call(InicioAltairJacob.bandejaXedoc, "Quit");
+					Dispatch.call(InicioAltairJacob.xedoc2, "Quit");
+					Dispatch.call(InicioAltairJacob.xedoc1, "Quit");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				finally {
+					System.exit(0);
+					dispose();
+				}
 
 			}
 		});
@@ -442,9 +435,27 @@ public class VentanaControlXedoc extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				/*
-				new MaquetadoXedocSelenium(InicioAltairJacob.driverBandejaXedoc, "Xedoc 1", false);
-				*/
+				
+				Variant visible = Dispatch.get(InicioAltairJacob.xedoc1, "visible");
+				
+		//		System.out.println("Xedoc 1 visible... " + visible.toString());
+				boolean vis = Boolean.valueOf(visible.toString());
+		//		System.out.println("Xedoc 1 visible... " + vis);
+				
+				if(vis){
+					new MaquetadoXedoc(InicioAltairJacob.xedoc1, "Xedoc 1", false, true);
+				}
+				else{
+					
+					visible = Dispatch.get(InicioAltairJacob.xedoc2, "visible");
+					vis = Boolean.valueOf(visible.toString());
+					
+					if(vis){
+				
+					new MaquetadoXedoc(InicioAltairJacob.xedoc2, "Xedoc 2", false, true);
+					}
+				}
+					
 				
 				/*
 				String cadena = ""
@@ -458,19 +469,19 @@ public class VentanaControlXedoc extends JFrame{
 				JavascriptExecutor js = (JavascriptExecutor) InicioAltairJacob.driverBandejaXedoc;
 				js.executeScript(cadena);
 				*/
-			}
+				}
 		});
 		
-		
+		jBmaquetarXedoc2.setVisible(false);
 		jBmaquetarXedoc2.setBackground(Color.cyan);
 		jBmaquetarXedoc2.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-					/*
-				new MaquetadoXedocSelenium(InicioAltairJacob.driverXedoc2, "Xedoc 2", false);
-					*/
+					
+				new MaquetadoXedoc(InicioAltairJacob.xedoc2, "Xedoc 2", false, true);
+					
 				
 				/*
 				String cadena = ""
@@ -653,79 +664,47 @@ public class VentanaControlXedoc extends JFrame{
 	
 	public void gestionXedoc1(){
 		
-		/*
-		
-		bandejaXedoc1.switchTo().window(InicioAltairJacob.nombreVentanaXedoc1);
 		
 		if(xedoc1inicializado){
 			if(jBxedoc1.getBackground() != Color.GRAY){
-		//		Dispatch.put(Inicio.documento1.xedoc, "visible","true");
-				Point punto;
-				if(InicioAltairJacob.numeroPantallas == 2){
-					punto = new Point(1050,1260);
-				}
-				else{
-					punto = new Point(1050,1260);
-				}
-				
-				try {
-				
-					bandejaXedoc1.manage().window().setPosition(punto);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Dispatch.put(InicioAltairJacob.xedoc1, "visible","false");
 				jBxedoc1.setBackground(Color.gray);
 
 			}
 			else{
-		//		Dispatch.put(Inicio.documento1.xedoc, "visible","false");
+				
+				Dispatch.put(InicioAltairJacob.xedoc1, "visible","true");
+				if(jBxedoc2.getBackground() != Color.gray){
+					Dispatch.put(InicioAltairJacob.xedoc2, "visible","false");
+					jBxedoc2.setBackground(Color.gray);
+				}
 				jBxedoc1.setBackground(Color.green);
 
-				Point punto = new Point(0,0);
-				bandejaXedoc1.manage().window().setPosition(punto);
-			
 			}
 				
 		}
 		
-		*/
 	}
 	
 	public void gestionXedoc2(){
-		
-		/*
-		 
 		 
 		if(xedoc1inicializado){
 			if(jBxedoc2.getBackground() != Color.GRAY){
-		//		Dispatch.put(Inicio.documento1.xedoc, "visible","true");
-				Point punto;
-				if(InicioAltairJacob.numeroPantallas == 2){
-					punto = new Point(1050,1260);
-				}
-				else{
-					punto = new Point(1050,1260);
-				}
-				try {
-					xedoc2.manage().window().setPosition(punto);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+				Dispatch.put(InicioAltairJacob.xedoc2, "visible","false");
 				jBxedoc2.setBackground(Color.gray);
 			}
 			else{
-		//		Dispatch.put(Inicio.documento1.xedoc, "visible","false");
+				if(jBxedoc1.getBackground() != Color.gray){
+					Dispatch.put(InicioAltairJacob.xedoc1, "visible","false");
+					jBxedoc1.setBackground(Color.gray);
+				}
+				Dispatch.put(InicioAltairJacob.xedoc2, "visible","true");
 				jBxedoc2.setBackground(Color.green);
-				
-				Point punto = new Point(0,0);
-				xedoc2.manage().window().setPosition(punto);
-			
 			}
 		}
 		
-		*/
+		
 	}
 	
 	

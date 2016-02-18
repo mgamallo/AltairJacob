@@ -41,6 +41,7 @@ public class InicioAltairJacob {
 
 	public static User user;
 	
+	public static String[][] tablaDocumentos;
 	
 	public static void capturaWebs(){
 		
@@ -139,29 +140,41 @@ public class InicioAltairJacob {
 			alto = 1172;
 			arriba = 0;
 			izquierda = 0;
+			
+		    Dispatch.put(bandejaXedoc,"height",alto);
+		    Dispatch.put(bandejaXedoc,"width",ancho);
+		    Dispatch.put(bandejaXedoc,"top",arriba);  
+		    Dispatch.put(bandejaXedoc,"left",izquierda);
+			
+		    Dispatch.put(xedoc2,"height",alto);
+		    Dispatch.put(xedoc2,"width",ancho);
+		    Dispatch.put(xedoc2,"top",arriba);  
+		    Dispatch.put(xedoc2,"left",izquierda + ancho);
+			
 		}
 		else{
 			ancho = 1023;
 			alto = 1279;
 			arriba = 0;
 			izquierda = 1025;
+			
+		    Dispatch.put(xedoc2,"height",alto);
+		    Dispatch.put(xedoc2,"width",ancho);
+		    Dispatch.put(xedoc2,"top",arriba);  
+		    Dispatch.put(xedoc2,"left",izquierda);
+			
+		    Dispatch.put(bandejaXedoc,"height",alto);
+		    Dispatch.put(bandejaXedoc,"width",ancho);
+		    Dispatch.put(bandejaXedoc,"top",arriba);  
+		    Dispatch.put(bandejaXedoc,"left",izquierda + ancho);
 		}
 		
-	    Dispatch.put(bandejaXedoc,"height",alto);
-	    Dispatch.put(bandejaXedoc,"width",ancho);
-	    Dispatch.put(bandejaXedoc,"top",arriba);  
-	    Dispatch.put(bandejaXedoc,"left",izquierda);
-		
-	    Dispatch.put(xedoc2,"height",alto);
-	    Dispatch.put(xedoc2,"width",ancho);
-	    Dispatch.put(xedoc2,"top",arriba);  
-	    Dispatch.put(xedoc2,"left",izquierda + ancho);
-	
+
 	    
-		// Dispatch.put(bandejaXedoc,"menubar",false);
-		 Dispatch.put(bandejaXedoc,"toolbar",false);
-		// Dispatch.put(xedoc2,"menubar",false);
-		 Dispatch.put(xedoc2,"toolbar",false);	
+		Dispatch.put(bandejaXedoc,"menubar",false);
+		Dispatch.put(bandejaXedoc,"toolbar",false);
+		Dispatch.put(xedoc2,"menubar",false);
+		Dispatch.put(xedoc2,"toolbar",false);	
 	 
 
 	}
@@ -187,24 +200,29 @@ public class InicioAltairJacob {
 		// System.out.println(Dispatch.get(centro,"value").toString());
 	 
 		 Dispatch password = Dispatch.call(documento, "getElementById","j_password").getDispatch();
-		 Dispatch.put(password, "value", /* user.getPassword() */ "archivo1");
+		 Dispatch.put(password, "value",  user.getPassword() /* "archivo1"*/ );
 		 
 		 Dispatch login = Dispatch.call(documento, "getElementById","j_username").getDispatch();
-		 Dispatch.put(login, "value", /* user.getUsername() */ "mgamgul1");
+		 Dispatch.put(login, "value",  user.getUsername()  /* "mgamgul1"*/ );
 		 
 		 Dispatch boton = Dispatch.call(documento, "getElementsByTagName","input").getDispatch();
 		 
 		 int numeroInputs = Integer.valueOf(Dispatch.get(boton,"length").toString());
-		// System.out.println(Dispatch.get(boton,"length").toString());
+	//	 System.out.println(Dispatch.get(boton,"length").toString());
 		 
 		 for(int i=0;i<numeroInputs;i++){
 			 Dispatch input = Dispatch.call(boton,String.valueOf(i)).getDispatch();
-			// System.out.println(i + "     " + Dispatch.get(input,"value"));
+	//		 System.out.println(i + "     " + Dispatch.get(input,"value"));
 			 if(Dispatch.get(input,"value").toString().equals("Entrar")){
-				 Dispatch.call(input, "click");
+				 Dispatch.call(input, "setAttribute","id","entrar");
 				 break;
 			 }
 		 }
+		 
+		 
+		 Dispatch.call(navegador,"navigate","javascript:document.getElementById('entrar').click();");
+		 
+		 
 		 
 		 /*
 		// Dispatch formulario = Dispatch.call(documento, "getElementById","loginForm").getDispatch();
@@ -257,10 +275,13 @@ public class InicioAltairJacob {
 			}
 			// System.out.println(cadena.toString());
 			if (Integer.valueOf(cadena.toString()) == estado) {
-				System.out.println("CArgado");
 				break;
 			}
+			
+			ciclos++;
 		}
+		
+		System.out.println("CArgado en... " + ciclos + " ciclos.");
 	}
 	
 	
@@ -357,12 +378,17 @@ public class InicioAltairJacob {
 		
 		user = new User(usuario, pass);
 		
+		new CapturaRatonYTeclado();
+		
 		capturaWebs();
 		
 		cargaUsuarioXedoc(bandejaXedoc, RUTAXEDOC);
 		cargaUsuarioXedoc(xedoc2, RUTAXEDOC);
 		
+
 		colocaWebsXedoc();
+		
+		System.out.println("Selecciono bandeja...");
 		
 		selectMiBandeja(bandejaXedoc);
 		getReadyState(xedoc2, 4, 20);

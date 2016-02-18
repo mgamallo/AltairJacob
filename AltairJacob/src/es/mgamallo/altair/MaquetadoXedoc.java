@@ -8,6 +8,7 @@ import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 
+
 public class MaquetadoXedoc {
 
 	ActiveXComponent navegador;
@@ -24,12 +25,17 @@ public class MaquetadoXedoc {
 	private int numeroPantallas;
 	
 	boolean errorDeContexto = false;
+	boolean maquetado;
 	
-	public MaquetadoXedoc(ActiveXComponent navegador, String nombreXedoc, boolean inicializarTanda){
+	/*
+	 * @param maquetado  Si es un maquetado manual. True.
+	 */
+	public MaquetadoXedoc(ActiveXComponent navegador, String nombreXedoc, boolean inicializarTanda, boolean maquetado){
 		this.navegador = navegador;
 		this.nombreXedoc = nombreXedoc;
 		this.documento = Dispatch.call(navegador, "document").getDispatch();
 		this.numeroPantallas = InicioAltairJacob.numeroPantallas;
+		this.maquetado = maquetado;
 	//	this.inicializaTanda = inicializarTanda;
 		
 		inicializaMaquetado();
@@ -66,11 +72,17 @@ public class MaquetadoXedoc {
 	
 	public void dispatchMaquetado01(){
 		
+		
 		//  Fondo y encabezado
-		Dispatch fondoPagina = Dispatch.call(documento,"getElementById","page").getDispatch();
-		Dispatch fondoPaginaEstilo = Dispatch.call(fondoPagina, "getAttribute","style").getDispatch();
+		Dispatch fondoPagina = Dispatch.call(documento,"getElementById","page").toDispatch();
+		Dispatch fondoPaginaEstilo = Dispatch.call(fondoPagina,"style").toDispatch();
 		Dispatch.put(fondoPaginaEstilo,"background",colorFondo);
 
+		Dispatch bodys = Dispatch.call(documento, "getElementsByTagName","body").toDispatch();
+		Dispatch body = Dispatch.get(bodys, "0").toDispatch();
+		Dispatch bodyEstilo = Dispatch.get(body, "style").toDispatch();
+		Dispatch.put(bodyEstilo, "background", colorFondo);
+		
 		Dispatch botonSalir = Dispatch.call(documento, "getElementById","botonSalir").toDispatch();
 		Dispatch.put(botonSalir, "innerHTML",nombreXedoc);
 		Dispatch botonSalirEstilo = Dispatch.get(botonSalir, "style").toDispatch();
@@ -87,19 +99,65 @@ public class MaquetadoXedoc {
 		
 		Dispatch header = Dispatch.call(documento, "getElementById","header").toDispatch();
 		Dispatch headerStilo = Dispatch.get(header, "style").toDispatch();
-		Dispatch.put(headerStilo, "height","0px");
+		Dispatch.put(headerStilo, "height","35px");
 		
 		// Columna izquierda
 		Dispatch columnaI = Dispatch.call(documento, "getElementById","columnaIzquierdaEdicion").toDispatch();
 		Dispatch columnaIEstilo = Dispatch.get(columnaI, "style").toDispatch();
-		Dispatch.put(columnaIEstilo, "height","1200px");
+		Dispatch.put(columnaIEstilo, "height","1070px");                            //     <--------------------------
 		Dispatch.put(columnaIEstilo, "width","800px");
 		
 		Dispatch completePreview = Dispatch.call(documento, "getElementById","completePreview").toDispatch();
 		Dispatch completePreviewEstilo = Dispatch.get(completePreview, "style").toDispatch();
-		Dispatch.put(completePreviewEstilo, "height","1200px");
+		Dispatch.put(completePreviewEstilo, "height","1100px");						//     <--------------------------
 		Dispatch.put(completePreviewEstilo, "width","800px");
+
 		
+		//	Fondo y encabezado Javascript
+		
+		String fondoYencabezado = ""
+				+ ""
+				+ "var fondoPagina = document.getElementById('page');"
+				+ "fondoPagina.style.background = '" + colorFondo + "';"
+				+ "var bodys = document.getElementsByTagname('body');"
+				+ "bodys[0].style.background = '" + colorFondo + "';"
+
+				+ "var botonSalir = document.getElementById('botonSalir');"
+				+ "botonSalir.innerHTML = '" + nombreXedoc + "';"
+				+ "botonSalir.style.font = 'bold 28px arial, sans-serif';"
+				+ "botonSalir.style.color = 'red';"
+				+ "var branding = document.getElementById('branding');"
+				+ "branding.style.display = 'none';"
+				
+				+ "var entornoLogin = document.getElementById('entornoLogin');"
+				+ "entornoLogin.style.display = 'none';"
+				+ "var header = document.getElementById('header');"
+				+ "header.style.height = '0px';"
+				+ "";
+		
+		
+		String columnaIzquierda = ""
+				+ ""
+				+ "var columnaI = document.getElementById('columnaIzquierdaEdicion');"
+				+ "columnaI.style.height = '1100px';"
+				+ "columnaI.style.width = '800px';"
+				+ ""
+				+ "var completePreview = document.getElementById('completePreview');"
+				+ "completePreview.style.height = '1100px';"
+				+ "completePreview.style.width = '800px';"
+				+ ""
+				+ "var previewer = document.getElementById('previewer');"
+				+ "if(previewer != null && previewer != undefined){"
+					+ "previewer.style.height = '1200px';"
+					+ "previewer.style.width = '800px';"
+				+ "}"
+				
+				+ "";
+		
+		
+//		Dispatch.call(navegador, "navigate","javascript:" + fondoYencabezado + columnaIzquierda);
+		
+/*
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -107,14 +165,14 @@ public class MaquetadoXedoc {
 			e.printStackTrace();
 		}
 		
-
+*/
 		
 		
 		//  Columna Derecha
 		
 		String ancho = "";
-		String altoArbol = "1000px";
-		String altoTablameritos = "1050px";
+		String altoArbol = "950px";
+		String altoTablameritos = "950px";
 		
 		if(numeroPantallas == 1){
 			ancho = "800px";
@@ -124,6 +182,106 @@ public class MaquetadoXedoc {
 		else{
 			ancho = "960px";
 		}
+
+/*		
+		String columnaDerecha1 = ""
+				+ ""
+			//	+ "alert('adios');"
+				+ "var colDerecha = function(){"		
+					+ "var divOcultarAsociados = document.getElementById('divOcultarAsociados');"
+					+ "divOcultarAsociados.style.display = 'none';"
+					+ ""
+					+ "var columnaD = document.getElementById('columnaDerechaEdicion');"
+					+ "columnaD.style.width = '1000px';"
+					+ "columnaD.style.marginLeft = '" + ancho + "';"
+					
+					
+					+ "var tablaAtributos = document.getElementById('tablaAtributos');"
+					+ "tablaAtributos.style.border = 'none';"
+					+ "tablaAtributos.style.background = '" + colorFondoInterno + "';"
+					+ "tablaAtributos.style.color = '#000000';"
+					+ "tablaAtributos.style.minWidth = '520px';"
+					+ "tablaAtributos.style.width = '520px';"
+					+ ""
+					+ "var edicionForm = document.getElementById('edicionForm');"
+					+ "edicionForm.style.width = '1000px';"
+					
+					+ "var tablaElementosAjax = document.getElementById('tablaElementosAjax');"
+					+ "tablaElementosAjax.style.marginTop = '-70px';"
+					+ "tablaElementosAjax.style.height = '" + altoArbol + "';"
+					+ "tablaElementosAjax.style.width = '450px';"
+				+ "};"
+				
+				+ "setTimeout(function(){colDerecha();},500);"
+				+ "alert('hola');"
+				+ "";
+		
+		String marginTop = "";
+		if(InicioAltairJacob.numeroPantallas == 1){
+			marginTop = "-759px";
+		}
+		else{
+			marginTop = "-930px";
+		}
+*/		
+		
+	//	Dispatch.call(navegador, "navigate","javascript:" + columnaDerecha1);
+		
+/*		
+		String columnaDerecha2 = ""
+				+ ""
+				
+				+ "alert('hola');"
+				
+				+ "var tablaMeritos = document.getElementById('tablaMeritos');"
+				+ "tablaMeritos.style.background = '" + colorFondoInterno + "';"
+				+ "tablaMeritos.style.border = 'none';"
+				+ "tablaMeritos.style.height = '" + altoTablameritos + "';"
+				+ "tablaMeritos.style.minWidth = '400px';"
+				
+				+ "alert('hola');"
+				
+				+ "var arbol = document.getElementById('arbol');"
+				+ "arbol.style.height = '" + altoArbol + "';"
+				+ "arbol.style.width = '440px';"
+				+ "arbol.style.background = '" + colorFondoInterno + "';"
+				+ ""
+				+ "alert('hola');"
+				
+				+ "var tablaAtributosAjax = document.getElementById('tablaAtributosAjax');"
+				+ "tablaAtributosAjax.style.marginLeft = '470px';"
+				+ "tablaAtributosAjax.style.marginTop = '" + marginTop + "';"
+				+ "tablaAtributosAjax.style.miWidth = '500px';"
+				
+				+ "alert('hola');"
+				
+				+ "var colPropDinamica = document.getElementById('colPropDinamica');"
+				+ "colPropDinamica.style.display = 'none';"
+				
+				+ "var tablaDocumento = document.getElementById('tablaDocumento');"
+				+ "tablaDocumento.style.background = '" + colorFondoInterno + "';"
+				+ "tablaDocumento.style.border = 'none';"
+				+ "tablaDocumento.style.width = '520px';"
+				+ "tablaDocumento.style.minWidth = '520px';"
+				
+				+ "alert('hola');"
+				
+				+ "legend = document.getElementsByTagName('legend');"
+				+ ""
+				+ "var formLegend = function(){"
+					+ "for(var i=0;i<legend.length;i++){"
+						+ "legend[i].style.width = '400px';"
+						+ "legend[i].style.paddingTop = '40px';"
+					+ "}"
+				+ "};"
+		//		+ "alert(legend.length);"
+				+ ""
+				+ "setTimeout(function(){formLegend();},500);"
+				+ "}";
+*/		
+		
+		
+	//	Dispatch.call(navegador, "navigate","javascript:" + columnaDerecha2);
 		
 		
 		Dispatch divOcultarAsociados = Dispatch.call(documento, "getElementById","divOcultarAsociados").toDispatch();
@@ -200,11 +358,12 @@ public class MaquetadoXedoc {
 			 Dispatch.put(leyendaEstilo, "width","400px");
 			 Dispatch.put(leyendaEstilo, "paddingTop","40px");
 		 }
+
 		
 		/* volvemos columna izquierda */ 
 		Dispatch previewer = Dispatch.call(documento, "getElementById","previewer").toDispatch();
 		Dispatch previewerEstilo = Dispatch.get(previewer, "style").toDispatch();
-		Dispatch.put(previewerEstilo, "height","1200px");
+		Dispatch.put(previewerEstilo, "height","1100px");                         //     <--------------------------
 		Dispatch.put(previewerEstilo, "width","800px");		 
 		/* fin */
 		
@@ -232,10 +391,12 @@ public class MaquetadoXedoc {
 		
 		Dispatch.put(loadContexto, "innerHTML",nombrePaciente);
 		Dispatch loadContextoEstilo = Dispatch.get(loadContexto, "style").toDispatch();
-		Dispatch.put(loadContextoEstilo, "marginLeft","-800px");
+		Dispatch.put(loadContextoEstilo, "marginLeft","-1700px");                              // <--------------------||
 		Dispatch.put(loadContextoEstilo, "color","yellow");
-		Dispatch.put(loadContextoEstilo, "fontSize","25px");
-		Dispatch.put(loadContextoEstilo, "width","800px");
+		Dispatch.put(loadContextoEstilo, "fontSize","30px");
+		Dispatch.put(loadContextoEstilo, "width","1100px");
+		Dispatch.put(loadContextoEstilo, "paddingBottom","20px");
+		Dispatch.put(loadContextoEstilo, "textAlign", "center");
 		
 		Dispatch comprimirA = Dispatch.call(documento, "getElementById","selectDisplayButtonsTree").toDispatch();
 		Dispatch comprimirAEstilo = Dispatch.get(comprimirA, "style").toDispatch();
@@ -247,14 +408,14 @@ public class MaquetadoXedoc {
 		Dispatch.put(textAreaEstilo, "width","475px");
 		Dispatch.put(textAreaEstilo, "marginLeft","20px");	
 		
-		
+/*		
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+*/		
 		
 		
 		// Cajas amarillas
@@ -271,58 +432,147 @@ public class MaquetadoXedoc {
 			 if(v1.toString().contains("255")){
 				 if(i != 0){
 					 Dispatch.put(cajaEstilo, "backgroundColor",colorFondoCajas);
+					 String ide = "cajaColoreada" + conteo;
+					 conteo++;
+					 Dispatch.call(caja, "setAttribute", "id",ide);
+				 }
+				 
+				 Dispatch.put(cajaEstilo, "paddingLeft","20px");
+				 Dispatch.put(cajaEstilo, "marginLeft","20px");
+				 Dispatch.put(cajaEstilo, "width","465px");
+				 Dispatch.put(cajaEstilo, "color","red");
+				 Dispatch.put(cajaEstilo, "font","bold 18px arial, sans-serif");
+				 
+				 if(conteo == 2){
+					 break;
 				 }
 			 }
-			 
-			
 		 }
-		
-		/*
-		String cajasAmarillas = ""
-				+ ""
-				+ "var cajasAmarillas = document.getElementsByClassName('custom-combobox-input');"
-				+ "var tam = cajasAmarillas.length;"
-				+ "var conteo = 0;"
-				+ "for(var i=0;i<tam-2;i++){"
-					+ "var comparacion = cajasAmarillas[i].style.backgroundColor.search('255');"
-					// + "alert(cajasAmarillas[i].style.backgroundColor);"
-					+ "if(comparacion != -1){"
-						+ "if(i != 0){"
-							+ "cajasAmarillas[i].style.backgroundColor = '" + colorFondoCajas + "';"
-							+ "var ide = 'cajaColoreada' + conteo;"
-							+ "conteo = conteo + 1;"
-							+ "cajasAmarillas[i].setAttribute('id',ide);"						
-						+ "}"
+		 
+ 		 Dispatch fecha = Dispatch.call(documento, "getElementById","{hc}dataVersion-{hc}docExt").toDispatch();
+ 		 Dispatch fechaEstilo = Dispatch.get(fecha, "style").toDispatch();
+		 Dispatch.put(fechaEstilo,  "font","bold 20px arial, sans-serif");
+		 Dispatch.put(fechaEstilo, "backgroundColor",colorFondoCajas);
+		 
+ 		 Dispatch labelAtributo = Dispatch.call(documento, "getElementById","labelAtributo").toDispatch();
+ 		 Dispatch labelAtributoEstilo = Dispatch.get(labelAtributo, "style").toDispatch();
+		 Dispatch.put(labelAtributoEstilo, "paddingLeft","10px");
+		 Dispatch.put(labelAtributoEstilo, "width","500px");
+		 Dispatch.put(labelAtributoEstilo, "color","green");
+ 		 
+		 Dispatch estiloCajas = Dispatch.call(documento, "querySelectorAll",".custom-combobox").getDispatch();
+		 int tam = Integer.valueOf(Dispatch.get(estiloCajas,"length").toString());
+		 
+		 for(int i=0;i<tam-5;i++){
+			 Dispatch estiloCaja = Dispatch.get(estiloCajas, String.valueOf(i)).toDispatch();
+			 Dispatch estiloCajaEstilo = Dispatch.get(estiloCaja, "style").toDispatch();
+			 Dispatch.put(estiloCajaEstilo, "width", "520px");
+		 }
 
-						+ "cajasAmarillas[i].style.paddingLeft = '20px';"
-						+ "cajasAmarillas[i].style.marginLeft = '20px';"
-						+ "cajasAmarillas[i].style.width = '465px';"
-						+ "cajasAmarillas[i].style.color = 'red';"
-						+ "cajasAmarillas[i].style.font = 'bold 18px arial, sans-serif';"
+		 
+		//  Nhc servicio documento
+		 
+		 Dispatch primaryNav = Dispatch.call(documento, "getElementById","primary-nav").toDispatch();
+		 Dispatch anclas = Dispatch.call(primaryNav, "getElementsByTagName","a").toDispatch();
+		 tam = Integer.valueOf(Dispatch.get(anclas,"length").toString());
+		 System.out.println(tam);
+		 
+		 for(int i=0;i<tam;i++){
+			 Dispatch ancla= Dispatch.get(anclas, String.valueOf(i)).toDispatch();
+	 		 Dispatch anclaEstilo = Dispatch.get(ancla, "style").toDispatch();
+			 Dispatch.put(anclaEstilo, "marginRight","30px");
+		//	 Dispatch.put(anclaEstilo, "marginBottom","10px");
+			 Dispatch.put(anclaEstilo, "fontSize","28px");
+			 Dispatch.put(anclaEstilo, "color","yellow");
+			 Dispatch.put(anclaEstilo, "marginTop", "40px");
+			 
+			 if(i==0){
+				 Dispatch.call(ancla, "setAttribute","id","nhcNav");
+				 Dispatch.put(ancla, "innerHTML", "12345");
+			 }
+			 else if(i==1){
+				 Dispatch.call(ancla, "setAttribute","id","servicioNav");
+				 Dispatch.put(ancla, "innerHTML", "CARC");
+				 Dispatch.put(anclaEstilo, "marginRight", "0px");
+			 }
+			 else{
+				 Dispatch.call(ancla, "setAttribute","id","tituloNav");
+				 Dispatch.put(ancla, "innerHTML", "Consentimiento");
+			 }
+		 }
+		 
+		 String nombreCompletoPdf = Dispatch.get(labelAtributo,"innerHTML").toString();
+		 
+		 System.out.println(nombreCompletoPdf);
+		 
+		 
+		 Dispatch nuevaSeccionEdiciones = Dispatch.call(documento, "all","nuevaSeccionEdicion").toDispatch();
+		 tam = Integer.valueOf(Dispatch.get(nuevaSeccionEdiciones,"length").toString());
+		 System.out.println(tam);
+		 
+		 for(int i=2;i<tam;i++){
+			 Dispatch nuevaSeccionEdicion = Dispatch.get(nuevaSeccionEdiciones, String.valueOf(i)).toDispatch();
+			 Dispatch nuevaSeccionEdicionEstilo = Dispatch.get(nuevaSeccionEdicion, "style").toDispatch();
+			 Dispatch.put(nuevaSeccionEdicionEstilo, "display", "none");
+		 }
+		 
+		 Dispatch colPropDinamicaAnchas = Dispatch.call(documento, "all","colPropDinamicaAncha").toDispatch();
+		 tam = Integer.valueOf(Dispatch.get(colPropDinamicaAnchas,"length").toString());
+		 System.out.println(tam);
+		 
+		 for(int i=0;i<tam;i++){
+			 Dispatch colPropDinamicaAncha = Dispatch.get(colPropDinamicaAnchas, String.valueOf(i)).toDispatch();
+			 Dispatch colPropDinamicaAnchaEstilo = Dispatch.get(colPropDinamicaAncha, "style").toDispatch();
+			 Dispatch.put(colPropDinamicaAnchaEstilo, "width", "300px");
+			 Dispatch.put(colPropDinamicaAnchaEstilo, "textAlign", "left");
+		 }
+		 
+		 Dispatch footer = Dispatch.call(documento, "getElementById","footer").toDispatch();
+		 Dispatch footerEstilo = Dispatch.get(footer, "style").toDispatch();
+		 Dispatch.put(footerEstilo, "display", "none");
+		 
+			boolean errorNhc = false;
+			
+			XedocIndividualJacob xedoc = new XedocIndividualJacob(nombreCompletoPdf, navegador);
+		 
+			errorNhc = putNHC(navegador, xedoc);
+		 
+			System.out.println("Error en el nhc..." + errorNhc);
+			
+						
+			if(!errorNhc || maquetado){
+				
+				if(!errorDeContexto){
+					
+					xedoc.buscaNodo();
+					try {
+						Thread.sleep(100);
+						xedoc.seleccionarServicio();
+						Thread.sleep(100);
+						xedoc.seleccionarDocumento();
 
-						+ "if(conteo == 2){"
-						+ 	"break;"
-						+ "}"
-					+ "}"
-				+ "}"
-				+ "var fecha = document.getElementById('{hc}dataVersion-{hc}docExt');"
-				+ "fecha.style.backgroundColor = '" + colorFondoCajas + "';"
-				+ "fecha.style.font = 'bold 20px arial, sans-serif';"
-				+ ""
-				+ "var labelAtributo = document.getElementById('labelAtributo');"
-				+ "labelAtributo.style.width = '500px';"
-				+ "labelAtributo.style.color = 'green';"
-				+ "labelAtributo.style.paddingLeft = '10px';"
-				+ ""
-				+ "var estiloCajas = document.getElementsByClassName('custom-combobox');"
-				+ "var tam = estiloCajas.length;"
-				// + "alert(tam);"
-				+ "for(var i=0;i<tam-5;i++){"
-		//			+ "document.getElementById('{hc}titulo-{hc}docExt').value = tam;"
-					+ "estiloCajas[i].style.width = '520px';"
-				+ "}"
-				+ "";
-		*/
+						Thread.sleep(100);
+					//	xedoc.inicializaNodosHospUrgQui();
+						xedoc.gestionEventosNodos();
+						
+						Thread.sleep(100);
+						xedoc.ocultaNodos();
+						Thread.sleep(100);
+						xedoc.getFocus();
+						
+
+						
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			}
+			
+		 
+		 
+		// Dispatch.call(documento, "eval","alert('hola');");
 		
 	}
 	
@@ -381,7 +631,7 @@ public class MaquetadoXedoc {
 		
 		String ancho = "";
 		String altoArbol = "1000px";
-		String altoTablameritos = "1050px";
+		String altoTablameritos = "1000px";
 		
 		if(numeroPantallas == 1){
 			ancho = "800px";
@@ -649,50 +899,9 @@ public class MaquetadoXedoc {
 		
 		/*
 		
-		for(int i=2;i<5;i++)
-			js.executeScript("arguments[0].style.display = 'none'", nuevaSeccionEdicion.get(i));
-		
-		js.executeScript(cajasAmarillas);
-
-		List<WebElement> titulos = driver.findElements(By.id("colPropDinamicaAncha"));
-		System.out.println(titulos.size());
-		
-		for(int i=0;i<titulos.size();i++)
-			js.executeScript("arguments[0].style.width = '300px';arguments[0].style.textAlign = 'left';", titulos.get(i));
 
 		
-		//  Nhc servicio documento
-		
-		WebElement inicio = driver.findElement(By.xpath("//*[@id=\"primary-nav\"]/li[2]/a"));
-		WebElement docPendentes = driver.findElement(By.xpath("//*[@id=\"primary-nav\"]/li[3]/a"));
-		WebElement busqueda = driver.findElement(By.xpath("//*[@id=\"primary-nav\"]/li[4]/a"));
-		
-		String cadenaNav = ""
-				+ ""
-				+ "for(var i=0;i<3;i++){"
-					+ "arguments[i].style.color = 'yellow';"
-					+ "arguments[i].style.fontSize = '30px';"
-					+ "arguments[i].style.marginBottom = '10px';"
-					+ "arguments[i].style.marginRight = '30px';"
-					+ "if(i==0){"
-						+ "arguments[0].setAttribute('id','nhcNav');"
-//						+ "arguments[0].innerHTML = '12345';"
-					+ "}"
-					+ "else if(i==1){"
-						+ "arguments[1].setAttribute('id','servicioNav');"
-//						+ "arguments[1].innerHTML = 'CARC';"
-					+ "}"
-					+ "else{"
-						+ "arguments[2].setAttribute('id','tituloNav');"
-//						+ "arguments[2].innerHTML = 'Consentimento';"
-					+ "}"
-				+ "}"
 
-				+ "return document.getElementById('labelAtributo').innerHTML;";
-		
-		String nombreFichero = js.executeScript(cadenaNav, 
-					inicio, docPendentes, busqueda).toString();
-		
 		System.out.println(nombreFichero);
 		
 		boolean errorNhc = false;
@@ -728,5 +937,35 @@ public class MaquetadoXedoc {
 
 		}
 		*/
+	}
+	
+	public boolean putNHC(ActiveXComponent navegador, XedocIndividualJacob xedoc){
+		
+		System.out.println("Colocando nhcs... ");
+		
+		Dispatch documento = Dispatch.call(navegador,"document").toDispatch();
+		Dispatch nhcF = Dispatch.call(documento,"getElementById","nhcNav").toDispatch();
+		Dispatch servF = Dispatch.call(documento,"getElementById","servicioNav").toDispatch();
+		Dispatch nombreF = Dispatch.call(documento,"getElementById","tituloNav").toDispatch();
+		
+		Dispatch.put(nhcF, "innerHTML", xedoc.nhc);
+		Dispatch.put(servF, "innerHTML", xedoc.servicio);
+		Dispatch.put(nombreF, "innerHTML", xedoc.nombreDocumento);
+		
+		Dispatch loadContexto = Dispatch.call(documento, "getElementById","loadContexto").toDispatch();
+		String nombrePaciente = Dispatch.get(loadContexto, "innerHTML").toString();
+		
+		Dispatch nhcFEstilo = Dispatch.get(nhcF,"style").toDispatch();
+		Dispatch.put(nhcFEstilo, "marginLeft", "980px");
+		
+		if(nombrePaciente.contains(xedoc.nhc)){
+			Dispatch.put(nhcFEstilo, "color", "yellow");
+			return false;
+		}
+		else{
+			Dispatch.put(nhcFEstilo, "color", "red");
+			return true;
+		}
+		
 	}
 }

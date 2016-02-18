@@ -37,7 +37,7 @@ public class PruebaIE {
     	  }
       }
       
-      Dispatch theDocument = Dispatch.call(IE, "document").getDispatch();
+      Dispatch theDocument = Dispatch.call(IE, "Document").getDispatch();
       
       Dispatch.put(theDocument,"title","Hola pepe");
       
@@ -47,14 +47,24 @@ public class PruebaIE {
 
       System.out.println(System.getProperty("sun.arch.data.model"));
       
-      /*
+      
+      
+      
       //Espera de 10 segundos
         try {
-            Thread.sleep(10000);
+            Thread.sleep(3000);
         } catch (InterruptedException ex) {
             Logger.getLogger(PruebaIE.class.getName()).log(Level.SEVERE, null, ex);
         }
-      */
+
+        
+    /*****  Para ejecutar javascript ********************************************************************/    
+        
+     //   Dispatch window = Dispatch.get(theDocument, "parentwindow").toDispatch();
+     //   System.out.println(Dispatch.call(window,"execScript","alert('1+1');").toString());
+      
+      Dispatch window = Dispatch.get(theDocument, "parentWindow").toDispatch();
+      System.out.println(Dispatch.call(window,"execScript","alert('1+1');").toString());
       
       // Llamada al método que cierra la aplicación
      // Dispatch.call(IE, "Quit");
