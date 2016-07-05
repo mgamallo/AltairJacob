@@ -12,6 +12,7 @@ import com.jacob.com.Variant;
 
 
 
+
 public class GestionXedoc {
 
 	public static int RANGO_DIAS_CONSULTA = 100;
@@ -25,7 +26,7 @@ public class GestionXedoc {
 		int iCount = InicioAltairJacob.oWindows.getProperty("Count").getInt();
         System.out.println("iCount: " + iCount);        
 		
-        for (int i=iCount-1,j= 1; i >iCount-4 ; i--,j++) {
+        for (int i=iCount-1,j= 1; i >iCount-3 ; i--,j++) {
             ActiveXComponent oWindow = InicioAltairJacob.oWindows.invokeGetComponent("Item", new Variant(i));     
             String sLocName = oWindow.getProperty("LocationName").getString();
             String sFullName = oWindow.getProperty("FullName").getString();
@@ -381,10 +382,160 @@ public class GestionXedoc {
 		
 		Dispatch documento = Dispatch.call(navegador, "document").toDispatch();
 		
-		System.out.println("Va a clickar en siguiente");
-		try {
+		
+		// Comprobamos que no hemos avanzado manualmente el xedoc.
+		// Si ya lo hemos avanzado, pasamos directamente al segundo siguiente
+		
+		Dispatch nombrePdf = Dispatch.call(documento, "getElementById","labelAtributo").toDispatch();
+		Variant comprobarNombre;
+		int numCiclos = 0;
+		do{
+			try {
+				Thread.sleep(200);
+				numCiclos++;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			comprobarNombre = Dispatch.get(nombrePdf, "innerHTML");
+		}while(comprobarNombre.toString().equals("null"));
+		System.out.println(numCiclos);
+		System.out.println(comprobarNombre);
+		
+		boolean coincide = true;
+		if(nombreXedoc.equals("Xedoc 1")){
+			System.out.println(InicioAltairJacob.nombrePdfXedoc2);
+			if(comprobarNombre.toString().equals(InicioAltairJacob.nombrePdfXedoc2)){
+				System.out.println("Coincide. Hemos avanzado manualmente");
+			}
+			else{
+				System.out.println("No coincide. Modo automatico.");
+				coincide = false;
+			}
+		}
+		else{
+			System.out.println(InicioAltairJacob.nombrePdfXedoc1);
+			if(comprobarNombre.toString().equals(InicioAltairJacob.nombrePdfXedoc1)){
+				System.out.println("Coincide. Hemos avanzado manualmente");
+			}
+			else{
+				System.out.println("No coincide. Modo automatico.");
+				coincide = false;
+			}
+		
+		}
+		
+		if(!coincide){
+			System.out.println("Va a clickar en siguiente");
 
+			try {
+
+				Variant siguiente = Dispatch.call(documento, "getElementById", "siguiente");
+				System.out.println("Siguiente " + siguiente.toString());
+				if (siguiente.toString().equals("null")) {
+					System.out.println("No hay mas documentos de " + nombreXedoc);
+					hayMasDocumentos = false;
+					Dispatch.call(navegador, "navigate", "http://intranetchopo.sergas.local/");
+				} else {
+					Dispatch.call(navegador, "navigate", "javascript:document.getElementById('siguiente').click();");
+				}
+
+				// Dispatch siguiente = Dispatch.call(documento,
+				// "getElementById","siguiente").toDispatch();
+				// Dispatch.call(siguiente, "click");
+
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				// e1.printStackTrace();
+
+				System.out.println("No hay mas documentos.");
+				hayMasDocumentos = false;
+				Dispatch.call(navegador, "navigate", "http://intranetchopo.sergas.local/");
+
+			}
 			
+			boolean error = true;
+			
+			while(hayMasDocumentos && error){
+			
+			//  hay que darle una vuelta a todo esto. De momento solo se ejecuta una sóla vez.
+				error = false;
+				
+				System.out.println("2ª iteración..... ************************************************************");
+				
+			//	System.out.println("Checkea si hay un alert...");
+			//	checkAlert(driver);
+				
+				try {
+					Thread.sleep(400);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				System.out.println("Esperamos a que cargue el nuevo documento");
+				InicioAltairJacob.getReadyState(navegador, 3, 10);
+				
+				nombrePdf = Dispatch.call(documento, "getElementById","labelAtributo").toDispatch();
+				numCiclos = 0;
+				do{
+					try {
+						Thread.sleep(200);
+						numCiclos++;
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					comprobarNombre = Dispatch.get(nombrePdf, "innerHTML");
+				}while(comprobarNombre.toString().equals("null"));
+				System.out.println(numCiclos);
+				System.out.println(comprobarNombre);
+				
+				
+				if(nombreXedoc.equals("Xedoc 1")){
+					System.out.println(InicioAltairJacob.nombrePdfXedoc2);
+					if(comprobarNombre.toString().equals(InicioAltairJacob.nombrePdfXedoc2)){
+						System.out.println("Coincide");
+					}
+					else{
+						System.out.println("no coincide. vamos mal.");
+		//				error = true;
+		//				JOptionPane.showMessageDialog(null, "Error. No coinciden los nombres");
+					}
+				}
+				else{
+					System.out.println(InicioAltairJacob.nombrePdfXedoc1);
+					if(comprobarNombre.toString().equals(InicioAltairJacob.nombrePdfXedoc1)){
+						System.out.println("Coincide");
+					}
+					else{
+		//				System.out.println("no coincide. vamos mal.");
+		//				error = true;
+		//				JOptionPane.showMessageDialog(null, "Error. No coinciden los nombres");
+						
+					}
+				
+				}
+
+				
+			}
+			
+		}
+		
+		// Hacemos el segundo siguiente
+		
+		Variant tablaMeritos = Dispatch.call(documento, "getElementById","tablaMeritos");
+		System.out.println("Siguiente " + tablaMeritos.toString());
+		if(tablaMeritos.toString().equals("null")){
+			System.out.println("No cargó la tabla de méritos en " + nombreXedoc);
+			hayMasDocumentos = false;
+			//Dispatch.call(navegador, "navigate","http://intranetchopo.sergas.local/");
+		}
+		else{
+			
+			System.out.println("Encuentra la tabla de meritos 1");
+			System.out.println("Va a clickar en siguiente 2");
+
 			Variant siguiente = Dispatch.call(documento, "getElementById","siguiente");
 			System.out.println("Siguiente " + siguiente.toString());
 			if(siguiente.toString().equals("null")){
@@ -396,60 +547,10 @@ public class GestionXedoc {
 				Dispatch.call(navegador,"navigate","javascript:document.getElementById('siguiente').click();");
 			}
 			
-		//	Dispatch siguiente = Dispatch.call(documento, "getElementById","siguiente").toDispatch();
-		//	Dispatch.call(siguiente, "click");
-			
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			//e1.printStackTrace();
-			
-			System.out.println("No hay mas documentos.");
-			hayMasDocumentos = false;
-			Dispatch.call(navegador, "navigate","http://intranetchopo.sergas.local/");
-
 		}
-		if(hayMasDocumentos){
+
 		
-			System.out.println("2ª iteración..... ************************************************************");
-			
-		//	System.out.println("Checkea si hay un alert...");
-		//	checkAlert(driver);
-			
-			try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			InicioAltairJacob.getReadyState(navegador, 4, 40);
-			
-			Variant tablaMeritos = Dispatch.call(documento, "getElementById","tablaMeritos");
-			System.out.println("Siguiente " + tablaMeritos.toString());
-			if(tablaMeritos.toString().equals("null")){
-				System.out.println("No cargó la tabla de méritos en " + nombreXedoc);
-				hayMasDocumentos = false;
-				//Dispatch.call(navegador, "navigate","http://intranetchopo.sergas.local/");
-			}
-			else{
-				
-				System.out.println("Encuentra la tabla de meritos 1");
-				System.out.println("Va a clickar en siguiente 2");
 
-				Variant siguiente = Dispatch.call(documento, "getElementById","siguiente");
-				System.out.println("Siguiente " + siguiente.toString());
-				if(siguiente.toString().equals("null")){
-					System.out.println("No hay mas documentos de " + nombreXedoc);
-					hayMasDocumentos = false;
-					Dispatch.call(navegador, "navigate","http://intranetchopo.sergas.local/");
-				}
-				else{
-					Dispatch.call(navegador,"navigate","javascript:document.getElementById('siguiente').click();");
-				}
-				
-			}
-			
-		}
 
 		//	Cargamos el contexto.....
 		
@@ -465,7 +566,7 @@ public class GestionXedoc {
 			
 			InicioAltairJacob.getReadyState(navegador, 4, 40);
 			
-			Variant tablaMeritos = Dispatch.call(documento, "getElementById","tablaMeritos");
+			tablaMeritos = Dispatch.call(documento, "getElementById","tablaMeritos");
 			System.out.println("Siguiente " + tablaMeritos.toString());
 			if(tablaMeritos.toString().equals("null")){
 				System.out.println("No cargó la tabla de méritos en " + nombreXedoc);
@@ -605,6 +706,49 @@ public class GestionXedoc {
 		*/
 	}
 	
+	
+	public static void reInicializaXedocs(){
+		
+		for(int i=0;i<3;i++){
+			Cerrar.cerrarIexplorer();
+		}
+		
+		try {
+			
+			Dispatch.call(InicioAltairJacob.xedoc2, "Quit");
+			Dispatch.call(InicioAltairJacob.xedoc1, "Quit");
+			Dispatch.call(InicioAltairJacob.bandejaXedoc, "Quit");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			System.out.println("Error. Algún navegador ya estaba cerrado.");
+		}
+		
+		InicioAltairJacob.xedoc1 = null;
+		InicioAltairJacob.xedoc2 = null;
+		InicioAltairJacob.bandejaXedoc = null;
+		
+		InicioAltairJacob.capturaWebs();
+		
+		InicioAltairJacob.cargaUsuarioXedoc(InicioAltairJacob.bandejaXedoc, InicioAltairJacob.RUTAXEDOC);
+		InicioAltairJacob.cargaUsuarioXedoc(InicioAltairJacob.xedoc2, InicioAltairJacob.RUTAXEDOC);
+
+		InicioAltairJacob.colocaWebsXedoc();
+		
+	//	System.out.println("Selecciono bandeja...");
+		
+		InicioAltairJacob.selectMiBandeja(InicioAltairJacob.bandejaXedoc);
+		InicioAltairJacob.getReadyState(InicioAltairJacob.xedoc2, 4, 20);
+		InicioAltairJacob.selectMiBandeja(InicioAltairJacob.xedoc2);
+		
+		InicioAltairJacob.inicializaBandeja(InicioAltairJacob.bandejaXedoc, "Bandeja Xedoc 1");	
+		InicioAltairJacob.inicializaBandeja(InicioAltairJacob.xedoc2, "Bandeja Xedoc 2");	
+		
+		InicioAltairJacob.getReadyState(InicioAltairJacob.bandejaXedoc, 4, 40);
+		InicioAltairJacob.getReadyState(InicioAltairJacob.xedoc2, 4, 40);
+		
+		InicioAltairJacob.ventana.comboInicio.setSelectedIndex(0);
+		InicioAltairJacob.ventana.panelMover.setBackground(Color.red);
+	}
 	
 	private static String extraerNHC(String nombreFichero){
 		

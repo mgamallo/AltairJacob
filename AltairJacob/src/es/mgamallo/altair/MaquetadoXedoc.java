@@ -350,7 +350,7 @@ public class MaquetadoXedoc {
 		Dispatch legends = Dispatch.call(documento, "getElementsByTagName","legend").getDispatch();
 		 
 		 int numeroInputs = Integer.valueOf(Dispatch.get(legends,"length").toString());
-		 System.out.println("Número de legends... " + numeroInputs);
+//		 System.out.println("Número de legends... " + numeroInputs);
 		 
 		 for(int i=0;i<numeroInputs;i++){
 			 Dispatch leyenda = Dispatch.call(legends,String.valueOf(i)).getDispatch();
@@ -371,7 +371,7 @@ public class MaquetadoXedoc {
 		Variant nombrePacient = Dispatch.get(loadContexto,"innerHTML");
 		String nombrePaciente = nombrePacient.getString();
 		
-		System.out.println("Nombre del paciente  " + nombrePaciente);
+//		System.out.println("Nombre del paciente  " + nombrePaciente);
 		
 		int index = nombrePaciente.indexOf("(");
 		if(index != -1){
@@ -383,6 +383,7 @@ public class MaquetadoXedoc {
 		}
 		
 		System.out.println("Nombre del paciente  " + nombrePaciente);
+		
 		
 		// Otros
 		Dispatch contextoMenuSuperior = Dispatch.call(documento, "getElementById","contextoMenuSuperior").toDispatch();
@@ -422,7 +423,7 @@ public class MaquetadoXedoc {
 		Dispatch cajasAmarillas = Dispatch.call(documento, "querySelectorAll",".custom-combobox-input").getDispatch();
 		 
 		 int numeroCajas = Integer.valueOf(Dispatch.get(cajasAmarillas,"length").toString());
-		 System.out.println("Número de cajas... " + numeroCajas);
+//		 System.out.println("Número de cajas... " + numeroCajas);
 		 
 		 for(int i=0, conteo = 0;i<numeroCajas;i++){
 			 Dispatch caja = Dispatch.call(cajasAmarillas,String.valueOf(i)).getDispatch();
@@ -475,7 +476,7 @@ public class MaquetadoXedoc {
 		 Dispatch primaryNav = Dispatch.call(documento, "getElementById","primary-nav").toDispatch();
 		 Dispatch anclas = Dispatch.call(primaryNav, "getElementsByTagName","a").toDispatch();
 		 tam = Integer.valueOf(Dispatch.get(anclas,"length").toString());
-		 System.out.println(tam);
+//		 System.out.println(tam);
 		 
 		 for(int i=0;i<tam;i++){
 			 Dispatch ancla= Dispatch.get(anclas, String.valueOf(i)).toDispatch();
@@ -499,9 +500,16 @@ public class MaquetadoXedoc {
 				 Dispatch.call(ancla, "setAttribute","id","tituloNav");
 				 Dispatch.put(ancla, "innerHTML", "Consentimiento");
 			 }
-		 }
+		 }System.out.println("El nombre del pdf de xedoc 2 es... " + InicioAltairJacob.nombrePdfXedoc2);
 		 
 		 String nombreCompletoPdf = Dispatch.get(labelAtributo,"innerHTML").toString();
+		 
+		 if(nombreXedoc.equals("Xedoc 1")){
+			 InicioAltairJacob.nombrePdfXedoc1 = nombreCompletoPdf;
+		 }
+		 else{
+			 InicioAltairJacob.nombrePdfXedoc2 = nombreCompletoPdf;
+		 }
 		 
 		 System.out.println(nombreCompletoPdf);
 		 

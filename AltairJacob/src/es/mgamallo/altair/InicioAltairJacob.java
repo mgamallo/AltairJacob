@@ -12,7 +12,11 @@ import com.jacob.com.Variant;
 
 public class InicioAltairJacob {
 
+	protected static final String LS = System.getProperty("line.separator");
+	
 	static final String RUTAXEDOC = "http://xedocidx.sergas.local/xedoc_idx/login";
+	static final String RUTAIANUS = "http://ianuschop.sergas.local/ianus_chp_pro/inicio.jsp";
+
 	
     static ActiveXComponent oShell;  
     static ActiveXComponent oWindows; 
@@ -20,6 +24,7 @@ public class InicioAltairJacob {
 	static ActiveXComponent bandejaXedoc;
 	static ActiveXComponent xedoc1;
 	static ActiveXComponent xedoc2;
+	static ActiveXComponent ianus;
 	
 	public static boolean esWin64 = false;
 	
@@ -39,6 +44,9 @@ public class InicioAltairJacob {
 	public static int numPdfsTotales = 0;
 	public static String listaPdfs[];
 
+	public static String nombrePdfXedoc1 = "";
+	public static String nombrePdfXedoc2 = "";
+	
 	public static User user;
 	
 	public static String[][] tablaDocumentos;
@@ -89,6 +97,7 @@ public class InicioAltairJacob {
 				Thread.sleep(1000);
 				Runtime.getRuntime().exec("C:/Archivos de programa/Internet Explorer/iexplore.exe -nomerge");
 				Thread.sleep(1000);
+
 	        } catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -97,7 +106,6 @@ public class InicioAltairJacob {
 				e.printStackTrace();
 			}
 	    }
-
         
         int iCount = oWindows.getProperty("Count").getInt();
         System.out.println("iCount: " + iCount);        
@@ -124,7 +132,11 @@ public class InicioAltairJacob {
             if(j==2){
             	xedoc2= oWindow;
             }
+            if(j==3){
+            	ianus= oWindow;
+            } 
         }
+
 	}
 	
 	
@@ -178,6 +190,49 @@ public class InicioAltairJacob {
 	 
 
 	}
+	
+	
+	public static void cargaUsurioIanus(ActiveXComponent navegador, String ruta){
+		
+		Dispatch.call(navegador, "Navigate",ruta);
+		
+		final String introducirUsuarioPulido = 
+				"var framePrincipal = window.frames;" + LS +
+				"var frameLogin = framePrincipal['principal'].frames['main'];" + LS +
+				"var login = frameLogin.document.getElementById('login');" + LS +
+				"var password = frameLogin.document.getElementById('password');" + LS +
+				"login.value = '" + user.getUsername() + "';" + LS +
+				"password.value = '" + user.getPassword() + "';" + LS +
+				"frameLogin.aceptar();"
+				;  
+			
+			// introduceUsuarioJacob(Inicio.ianus1, Inicio.usuario);
+			
+			Dispatch.call(navegador,"Navigate","javascript:" + introducirUsuarioPulido);
+			
+			try {
+				Thread.sleep(1500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Dispatch.put(navegador,"Visible",true);
+			Dispatch.put(navegador,"menubar",false);
+			Dispatch.put(navegador,"toolbar",false);
+			
+			
+								//	Dispatch.put(Inicio.paciente1.ianus,"height",550);  // 1099
+			
+		    Dispatch.put(navegador,"height",1149);  // 1099
+		    Dispatch.put(navegador,"top",130);  // 180
+		    Dispatch.put(navegador,"left",1024);
+		    
+			
+//		    introduceUsuarioJacob(Inicio.ianus2, Inicio.usuario);
+
+	}
+	
 	
 	public static void cargaUsuarioXedoc(ActiveXComponent navegador, String ruta){
 
@@ -370,11 +425,23 @@ public class InicioAltairJacob {
 		GraphicsDevice[] gs = ge.getScreenDevices();
 
 		numeroPantallas = gs.length;
+		
+		String usuario = "";
+		String pass = "";
+		
+		if(args.length == 0){
+			System.out.println("No hay argumentos....");
+			
+			VentanaPassword vPassword = new VentanaPassword("USUARIO", "");
+			vPassword.setVisible(true);
+			usuario = vPassword.usuarioSelenium.getUsername();
+			pass = vPassword.usuarioSelenium.getPassword();
+		}
+		else if(args.length == 2){
+			usuario = args[0];
+			pass = args[1];
+		}
 
-		VentanaPassword vPassword = new VentanaPassword("USUARIO", "");
-		vPassword.setVisible(true);
-		String usuario = vPassword.usuarioSelenium.getUsername();
-		String pass = vPassword.usuarioSelenium.getPassword();
 		
 		user = new User(usuario, pass);
 		
@@ -384,11 +451,12 @@ public class InicioAltairJacob {
 		
 		cargaUsuarioXedoc(bandejaXedoc, RUTAXEDOC);
 		cargaUsuarioXedoc(xedoc2, RUTAXEDOC);
+	//	cargaUsurioIanus(ianus, RUTAIANUS);
 		
 
 		colocaWebsXedoc();
 		
-		System.out.println("Selecciono bandeja...");
+	//	System.out.println("Selecciono bandeja...");
 		
 		selectMiBandeja(bandejaXedoc);
 		getReadyState(xedoc2, 4, 20);

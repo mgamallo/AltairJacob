@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -157,6 +157,24 @@ public class VentanaControlXedoc extends JFrame{
 				}
 				InicioAltairJacob.numPdfsTotales = numeroFilas;
 				*/
+				
+				comboInicio.removeAllItems();
+				
+				Dispatch documento = Dispatch.call(InicioAltairJacob.bandejaXedoc, "document").toDispatch();
+				Dispatch tabla = Dispatch.call(documento, "getElementById","row").toDispatch();
+				Dispatch celdas = Dispatch.call(tabla, "getElementsByTagName","td").toDispatch();
+				int tamaño = Integer.valueOf(Dispatch.get(celdas, "length").toString()) / 5 ;
+				
+				InicioAltairJacob.listaPdfs = new String[tamaño];
+				
+				for(int i=0;i<tamaño;i++){
+					Dispatch celda = Dispatch.get(celdas, String.valueOf(i*5+2)).toDispatch();
+					InicioAltairJacob.listaPdfs[i] = Dispatch.get(celda,"innerHTML").toString();
+					comboInicio.addItem(String.valueOf(i+1));
+				}
+
+				InicioAltairJacob.numPdfsTotales = tamaño;
+				
 			}
 		});
 		
@@ -389,9 +407,10 @@ public class VentanaControlXedoc extends JFrame{
 				}
 				
 				try {
-					Dispatch.call(InicioAltairJacob.bandejaXedoc, "Quit");
+					
 					Dispatch.call(InicioAltairJacob.xedoc2, "Quit");
 					Dispatch.call(InicioAltairJacob.xedoc1, "Quit");
+					Dispatch.call(InicioAltairJacob.bandejaXedoc, "Quit");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -404,7 +423,7 @@ public class VentanaControlXedoc extends JFrame{
 			}
 		});
 		
-		
+		jBpegarTitulo.setVisible(false);
 		jBpegarTitulo.setBackground(Color.cyan);
 		jBpegarTitulo.addActionListener(new ActionListener() {
 			
@@ -498,6 +517,7 @@ public class VentanaControlXedoc extends JFrame{
 			}
 		});
 		
+		jBrecargarArbol.setVisible(false);
 		jBrecargarArbol.setBackground(Color.cyan);
 		jBrecargarArbol.addActionListener(new ActionListener() {
 			
@@ -546,16 +566,36 @@ public class VentanaControlXedoc extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-				/*
-				jBiniciar.setEnabled(true);
-				jBiniciar.setBackground(Color.lightGray);
-				GestionXedocSelenium.reInicializaXedocs();
 				
-				InicioAltairJacob.numPdfsTotales = 0;
+				for(int i=0;i<3;i++){
+					Cerrar.cerrarIexplorer();
+				}
 				
-				jBbandeja1.doClick();
-				*/
+				try {
+					
+					Dispatch.call(InicioAltairJacob.xedoc2, "Quit");
+					Dispatch.call(InicioAltairJacob.xedoc1, "Quit");
+					Dispatch.call(InicioAltairJacob.bandejaXedoc, "Quit");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}finally {
+					InicioAltairJacob.ventana.dispose();
+				}
 				
+				
+				String comando = "java -jar AltairJacob.jar " + InicioAltairJacob.user.getUsername() 
+						+ " " + InicioAltairJacob.user.getPassword();
+				
+				try {
+					Runtime.getRuntime().exec(comando);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				System.exit(0);
+				dispose();
 			}
 		});
 		
