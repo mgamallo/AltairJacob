@@ -1,6 +1,12 @@
 package es.mgamallo.altair;
 
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Calendar;
 import java.util.Set;
 
@@ -438,6 +444,11 @@ public class GestionXedoc {
 					Dispatch.call(navegador, "navigate", "http://intranetchopo.sergas.local/");
 				} else {
 					Dispatch.call(navegador, "navigate", "javascript:document.getElementById('siguiente').click();");
+					
+					Thread.sleep(500);
+					Robot r = new Robot();
+					r.keyPress(KeyEvent.VK_ENTER);
+					
 				}
 
 				// Dispatch siguiente = Dispatch.call(documento,
@@ -520,6 +531,8 @@ public class GestionXedoc {
 				
 			}
 			
+			
+			
 		}
 		
 		// Hacemos el segundo siguiente
@@ -544,8 +557,61 @@ public class GestionXedoc {
 				Dispatch.call(navegador, "navigate","http://intranetchopo.sergas.local/");
 			}
 			else{
+				Dispatch.put(navegador, "height", 700);
 				Dispatch.call(navegador,"navigate","javascript:document.getElementById('siguiente').click();");
+				
+				try {
+					Thread.sleep(200);
+					Robot r = new Robot();
+					r.keyPress(KeyEvent.VK_ENTER);
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			
+			if(nombreXedoc.equals("Xedoc 1")){
+				InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.green);
+				InicioAltairJacob.ventana.gestionXedoc1();
+				InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.gray);
+				InicioAltairJacob.ventana.gestionXedoc2();
+			}
+			else{
+				InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.green);
+				InicioAltairJacob.ventana.gestionXedoc2();
+				InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.gray);
+				InicioAltairJacob.ventana.gestionXedoc1();
+				
+			}
+
+			
+			Robot robot;
+			try {
+				robot = new Robot();
+				
+				Point p = MouseInfo.getPointerInfo().getLocation();
+														
+				robot.delay(300);
+				robot.mouseMove(600, 18);
+				robot.mousePress(InputEvent.BUTTON1_MASK);
+				robot.mouseRelease(InputEvent.BUTTON1_MASK);
+				robot.delay(200);
+				robot.mouseMove(p.x, p.y);
+				
+				robot.keyPress(KeyEvent.VK_TAB);
+				robot.keyRelease(KeyEvent.VK_TAB);
+				
+			} catch (AWTException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			
 			
 		}
 

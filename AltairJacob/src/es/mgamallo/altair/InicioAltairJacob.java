@@ -38,6 +38,7 @@ public class InicioAltairJacob {
 	static int numeroPantallas;
 
 	static boolean inicioTanda = true;
+	static boolean primerPdf = true;
 
 	public static int RANGO_DIAS_CONSULTA = 100;
 
@@ -178,7 +179,7 @@ public class InicioAltairJacob {
 		    Dispatch.put(bandejaXedoc,"height",alto);
 		    Dispatch.put(bandejaXedoc,"width",ancho);
 		    Dispatch.put(bandejaXedoc,"top",arriba);  
-		    Dispatch.put(bandejaXedoc,"left",izquierda + ancho);
+		    Dispatch.put(bandejaXedoc,"left",0);
 		}
 		
 
@@ -247,7 +248,7 @@ public class InicioAltairJacob {
 		 
 		 Dispatch opciones = Dispatch.call(centro, "getElementsByTagName","option").getDispatch();
 		 // System.out.println(Dispatch.call(opciones,"length").toString());
-		 Dispatch centroSel = Dispatch.call(opciones,"6").getDispatch();
+		 Dispatch centroSel = Dispatch.call(opciones,"7").getDispatch();
 		// System.out.println(Dispatch.get(centroSel,"value"));
 		 Dispatch.put(centroSel,"selected","true");
 		 
@@ -389,14 +390,21 @@ public class InicioAltairJacob {
 		Dispatch header = Dispatch.call(documento, "getElementById","header").getDispatch();
 		Dispatch estiloHeader = Dispatch.get(header, "style").getDispatch();
 		
+		Dispatch content = Dispatch.call(documento, "getElementById","content").getDispatch();
+		Dispatch estiloContent = Dispatch.get(content, "style").getDispatch();
+		
 		if(nombreBandeja.equals("Bandeja Xedoc 1")){
 			Dispatch.put(estiloHeader, "background","black");	
+			Dispatch.put(estiloHeader, "height","60px");
 			Dispatch.put(documento,"title","Bandeja 1");
+			Dispatch.put(estiloContent, "margin-top","30px");
 		}
 		else{
-			Dispatch.put(estiloHeader, "background","black");	
+			Dispatch.put(estiloHeader, "background","black");
+			Dispatch.put(estiloHeader, "height","60px");
 			Dispatch.put(estiloEntornoLogin, "color","red");
 			Dispatch.put(documento,"title","Bandeja 2");
+			Dispatch.put(estiloContent, "margin-top","30px");
 		}
 		
 		/*
@@ -436,6 +444,9 @@ public class InicioAltairJacob {
 			vPassword.setVisible(true);
 			usuario = vPassword.usuarioSelenium.getUsername();
 			pass = vPassword.usuarioSelenium.getPassword();
+			
+		//	usuario = "asanagu1";
+		//	pass = "coke2511";
 		}
 		else if(args.length == 2){
 			usuario = args[0];

@@ -106,7 +106,7 @@ public class XedocIndividualJacob {
 				carpeta = campos[0].substring(index+1);
 			}
 
-			int indexf = campos[3].lastIndexOf(" r _f");
+			int indexf = campos[3].lastIndexOf(" r_f");
 			campos[3] = campos[3].substring(0,indexf);
 			
 			nombreDocumento = campos[3];
@@ -217,6 +217,15 @@ public class XedocIndividualJacob {
 		}
 
 		
+		// Resalta nombre paciente
+		Dispatch nodoLin = Dispatch.call(documento, "getElementById","360340-14--" + nhc).toDispatch();
+		Dispatch nodosAn = Dispatch.call(nodoLin, "getElementsByTagName","a").toDispatch();
+		Dispatch nodoAn = Dispatch.get(nodosAn,"0").toDispatch();
+		Dispatch nodoAnEstilo = Dispatch.get(nodoAn,"style").toDispatch();
+		Dispatch.put(nodoAnEstilo,"color","green");
+		Dispatch.put(nodoAnEstilo,"font-weight","bolder");
+		Dispatch.put(nodoAnEstilo,"font-size","14px");
+		
 	//	System.out.println(id);
 		
 		if(id.equals("HOS") || id.equals("URG") || id.equals("QUI")){
@@ -258,6 +267,7 @@ public class XedocIndividualJacob {
 					nodoAncla = Dispatch.call(documento, "getElementById","nodoSeleccionado").toDispatch();
 					Dispatch.call(navegador, "navigate","javascript:document.getElementById('nodoSeleccionado').click()");
 					
+					
 					if(id.equals("HOS") || id.equals("URG")){
 						String cadena = Dispatch.get(nodoAncla,"innerHTML").toString();
 						int index = cadena.lastIndexOf("/");
@@ -282,6 +292,11 @@ public class XedocIndividualJacob {
 						System.out.println(cadenaServicio);
 						
 					}
+					
+					
+					
+					
+					
 				}	
 				else{
 					cadenaServicio = "noexiste";
@@ -359,6 +374,7 @@ public class XedocIndividualJacob {
 									nodoAncla = Dispatch.call(documento, "getElementById","nodoSeleccionado").toDispatch();
 									Dispatch.call(navegador, "navigate","javascript:document.getElementById('nodoSeleccionado').click()");
 									// fin de la condicion
+									
 									break;
 								}
 							}
@@ -396,6 +412,12 @@ public class XedocIndividualJacob {
 			}
 					
 			if(fecha.length() > 0){
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					Dispatch fechaVersion = Dispatch.call(documento, "getElementById","{hc}dataVersion-{hc}docExt").toDispatch();
 					Dispatch.put(fechaVersion, "value", fecha);
 			}
@@ -548,6 +570,8 @@ public class XedocIndividualJacob {
 						+ "}"
 					+ "}"
 
+	//							+ "document.getElementById('submitFormFirmar').focus();"
+					
 					+ "";
 			
 			String selOn = ""
@@ -1410,20 +1434,70 @@ public class XedocIndividualJacob {
 		
 		public void getFocus(){
 			
-			Dispatch tablaAtributos = Dispatch.call(documento,"getElementById","tablaAtributos").toDispatch();
-			Dispatch leyendas = Dispatch.call(tablaAtributos, "getElementsByTagName","legend").toDispatch();
+			
+			Dispatch identificadorPaciente = Dispatch.call(documento,"getElementById","{hc}docExt").toDispatch();
+			Dispatch divs = Dispatch.call(identificadorPaciente,"getElementsByTagName","div").toDispatch();
+			Dispatch div = Dispatch.call(divs,"0").toDispatch();
+			
+			Dispatch estiloDiv = Dispatch.get(div, "style").toDispatch();
+			Dispatch.put(div, "innerHTML","" + numeroDelPdf + " de " + InicioAltairJacob.numPdfsTotales + "");
+		//	Dispatch.put(estiloTablaAtributos, "font", "bold 28px arial, sans-serif");
+			Dispatch.put(estiloDiv, "color", "yellow");
+		//	Dispatch.put(estiloDiv, "textAlign", "center");
+			
+		//	 Dispatch.put(estiloTablaAtributos,"color","white");
+		//	 Dispatch.put(estiloDiv,"background-color","rgb(28,95,162)");
+			 Dispatch.put(estiloDiv,"font-weight","bolder");
+			 Dispatch.put(estiloDiv,"font-size","230% ");
+			 Dispatch.put(estiloDiv,"padding","10px 0 0 10px");
+			 Dispatch.put(estiloDiv,"height","30px");
+			
+		//	String v = Dispatch.get(div,"innerHTML").getString();
+		//	System.out.println(v);
+			/*
+		//	Dispatch leyendas = Dispatch.call(tablaAtributos, "getElementsByTagName","legend").toDispatch();
 		//	Dispatch nombreFichero = Dispatch.call(documento, "getElementById","{hc}nombreFichero-{hc}docExt").toDispatch();
-			Dispatch leyenda = Dispatch.get(leyendas, "0").toDispatch();
-			Dispatch leyendaEstilo = Dispatch.get(leyenda, "style").toDispatch();
-			Dispatch.put(leyenda, "innerHTML","" + numeroDelPdf + " de " + InicioAltairJacob.numPdfsTotales + "");
-			Dispatch.put(leyendaEstilo, "font", "bold 28px arial, sans-serif");
-			Dispatch.put(leyendaEstilo, "color", "red");
-			Dispatch.put(leyendaEstilo, "textAlign", "right");
+		//	Dispatch leyenda = Dispatch.get(leyendas, "0").toDispatch();
+			Dispatch estiloTablaAtributos = Dispatch.get(tablaAtributos, "style").toDispatch();
+			Dispatch.put(tablaAtributos, "innerHTML","" + numeroDelPdf + " de " + InicioAltairJacob.numPdfsTotales + "");
+		//	Dispatch.put(estiloTablaAtributos, "font", "bold 28px arial, sans-serif");
+			Dispatch.put(estiloTablaAtributos, "color", "red");
+			Dispatch.put(estiloTablaAtributos, "textAlign", "center");
+			
+		//	 Dispatch.put(estiloTablaAtributos,"color","white");
+			 Dispatch.put(estiloTablaAtributos,"background-color","rgb(28,95,162)");
+			 Dispatch.put(estiloTablaAtributos,"font-weight","bolder");
+			 Dispatch.put(estiloTablaAtributos,"font-size","130% ");
+			 Dispatch.put(estiloTablaAtributos,"padding","10px");
+			 Dispatch.put(estiloTablaAtributos,"width","auto");
+			
+			 
+			 Dispatch cabecera_gris = Dispatch.call(documento, "querySelectorAll",".cabecera_gris").toDispatch();
+			 int numeroCajas = Integer.valueOf(Dispatch.get(cabecera_gris,"length").toString());
+			 System.out.println("Número de cabeceras gris... " + numeroCajas);
+			 
+			 Dispatch cabecera_gris_1 = Dispatch.call(cabecera_gris, String.valueOf(0)).toDispatch();
+			 Dispatch estiloCabecera_gris = Dispatch.get(cabecera_gris_1,"style").toDispatch();
+			 
+		//	 Dispatch.put(estiloCabecera_gris, "font", "bold 28px arial, sans-serif !important");
+			 Dispatch.put(estiloCabecera_gris,"padding","0px");
+			
+			*/
+			
 			
 			Variant nodoComprobar = Dispatch.call(documento, "getElementById","submitFormFirmar");
 			if(!nodoComprobar.toString().equals("null")){
-				Dispatch submit = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
-				Dispatch.get(submit,"focus");
+		//		Dispatch submit = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
+		//		Dispatch.get(submit,"focus");
+				
+				if(InicioAltairJacob.primerPdf){
+					Dispatch.call(navegador, "navigate","javascript:document.getElementById('submitFormFirmar').focus()");
+					InicioAltairJacob.primerPdf = false;
+				}
+				else{
+					Dispatch.call(navegador, "navigate","javascript:document.getElementById('{hc}responsable-{hc}docExt').focus()"); 
+				}
+					
 			}
 
 		}

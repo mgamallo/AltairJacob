@@ -177,12 +177,12 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 			if(e.getKeyCode() == 106){		// *
 				
 				if(InicioAltairJacob.xedoc1Activo){
-					InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.green);
-					InicioAltairJacob.ventana.gestionXedoc1();
-					InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.gray);
-					InicioAltairJacob.ventana.gestionXedoc2();
+			//		InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.green);
+			//		InicioAltairJacob.ventana.gestionXedoc1();
+			//		InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.gray);
+			//		InicioAltairJacob.ventana.gestionXedoc2();
 					
-					
+					/*
 					Robot robot;
 					try {
 						robot = new Robot();
@@ -200,7 +200,7 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					
+					*/
 					
 			//		habilitarJava();
 					
@@ -215,26 +215,50 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						System.out.println("No hay mas documentos de Xedoc 2.");
 						masDocumentos = false;
 					}
-										
-					if(masDocumentos){
-						
-						Dispatch submitFormFirmar = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
-						Dispatch.call(submitFormFirmar,"focus");
-						System.out.println("Ponemos el foco en Xedoc 2");
-					}
+					
 					
 					System.out.println("Empezamos a cargar xedoc 1");
 					InicioAltairJacob.xedoc1Activo = false;
 					GestionXedoc.carganuevoPdf(InicioAltairJacob.xedoc1, "Xedoc 1");
 					
+					/*
+					if(masDocumentos){
+						
+						Dispatch submitFormFirmar = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
+						Dispatch.call(submitFormFirmar,"focus");
+						System.out.println("Ponemos el foco en Xedoc 2");
+						
+						Robot robot;
+						try {
+							robot = new Robot();
+							
+							Point p = MouseInfo.getPointerInfo().getLocation();
+																	
+							robot.delay(300);
+							robot.mouseMove(1600, 900);
+							robot.mousePress(InputEvent.BUTTON1_MASK);
+							robot.mouseRelease(InputEvent.BUTTON1_MASK);
+							robot.delay(200);
+							robot.mouseMove(p.x, p.y);
+							
+						} catch (AWTException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+					*/
+					
+
+					
 				}
 				else{
-					InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.green);
-					InicioAltairJacob.ventana.gestionXedoc2();
-					InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.gray);
-					InicioAltairJacob.ventana.gestionXedoc1();
+			//		InicioAltairJacob.ventana.jBxedoc2.setBackground(Color.green);
+			//		InicioAltairJacob.ventana.gestionXedoc2();
+			//		InicioAltairJacob.ventana.jBxedoc1.setBackground(Color.gray);
+			//		InicioAltairJacob.ventana.gestionXedoc1();
 					
-					
+			/*		
 					
 					Robot robot;
 					try {
@@ -253,7 +277,7 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					
+				*/	
 					
 					System.out.println("Xedoc1Activo false... ");
 					
@@ -267,16 +291,37 @@ public class CapturaRatonYTeclado implements NativeKeyListener,
 						masDocumentos = false;
 					}
 										
-					if(masDocumentos){
-						System.out.println("Ponemos el foco en Xedoc 1");
-						Dispatch submitFormFirmar = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
-						Dispatch.call(submitFormFirmar,"focus");
-					}
 					
 					System.out.println("Empezamos a cargar xedoc 2");
 					InicioAltairJacob.xedoc1Activo = true;
 					GestionXedoc.carganuevoPdf(InicioAltairJacob.xedoc2, "Xedoc 2");
 					
+					/*
+					if(masDocumentos){
+						System.out.println("Ponemos el foco en Xedoc 1");
+						Dispatch submitFormFirmar = Dispatch.call(documento, "getElementById","submitFormFirmar").toDispatch();
+						Dispatch.call(submitFormFirmar,"focus");
+						
+						Robot robot;
+						try {
+							robot = new Robot();
+							
+							Point p = MouseInfo.getPointerInfo().getLocation();
+																	
+							robot.delay(300);
+							robot.mouseMove(1600, 900);
+							robot.mousePress(InputEvent.BUTTON1_MASK);
+							robot.mouseRelease(InputEvent.BUTTON1_MASK);
+							robot.delay(200);
+							robot.mouseMove(p.x, p.y);
+							
+						} catch (AWTException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+					}
+					*/
 				}
 				
 				/*

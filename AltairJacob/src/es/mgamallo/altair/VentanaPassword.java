@@ -41,7 +41,7 @@ public class VentanaPassword extends javax.swing.JDialog {
         botonAceptar = new javax.swing.JButton();
         botonCancelar = new javax.swing.JButton();
 
-        setLocationRelativeTo(null);
+        
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(290, 300));
         setResizable(false);
@@ -145,6 +145,7 @@ public class VentanaPassword extends javax.swing.JDialog {
         
        // this.setUndecorated(true);
         pack();
+        setLocationRelativeTo(null);
         
         if(usuario.length()>2){
         	campoPassword.requestFocusInWindow();
