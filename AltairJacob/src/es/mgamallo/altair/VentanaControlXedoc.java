@@ -4,7 +4,7 @@ package es.mgamallo.altair;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-
+import java.awt.Font;
 import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +22,13 @@ import javax.swing.JPanel;
 
 
 
+
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.SliderUI;
+
+import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 
@@ -50,10 +57,10 @@ public class VentanaControlXedoc extends JFrame{
 	JButton jBpegarTitulo = new JButton("Pegar Titulo");
 	JButton jBmaquetarXedoc1 = new JButton("Maquetar");
 	JButton jBmaquetarXedoc2 = new JButton("Maquetar 2");
-	JButton jBrecargarArbol = new JButton("Recargar árbol");
+	JButton jBrecargarArbol = new JButton("Mostrar Nodos");
 	JButton jBsaltarPdf = new JButton("Saltar pdf");
 	
-	JButton jBiniciarBandejas = new JButton("Reiniciar Bandejas");
+	JButton jBrecargarPrograma = new JButton("Reiniciar Bandejas");
 	JButton jBactualizarLista = new JButton("Actualizar lista");
 	
 	JComboBox comboInicio = new JComboBox();
@@ -61,7 +68,9 @@ public class VentanaControlXedoc extends JFrame{
 	
 	JLabel etiquetaVacia = new JLabel("      ");
 
-
+	static int RETARDO_INICIAL = 3500;
+	JSlider sliderRetardos = new JSlider(JSlider.HORIZONTAL,3000,7000,RETARDO_INICIAL);
+	JLabel etiquetaRetardos = new JLabel("" + RETARDO_INICIAL);
 	
 	static boolean xedoc1inicializado = false;
 	
@@ -70,7 +79,7 @@ public class VentanaControlXedoc extends JFrame{
 		
 		
 		setSize(550,100);
-		setResizable(false);
+		setResizable(true);
 		getContentPane().add(panel1);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setAlwaysOnTop(true);
@@ -85,7 +94,14 @@ public class VentanaControlXedoc extends JFrame{
 		
 		
 		
-
+		sliderRetardos.setMinorTickSpacing(100);
+		sliderRetardos.setMajorTickSpacing(500);
+	//	sliderRetardos.setPaintLabels(true);
+		sliderRetardos.setForeground(Color.gray);
+		sliderRetardos.setPaintTicks(true);
+	//	sliderRetardos.setBackground(Color.white);
+		
+		sliderRetardos.addChangeListener(new MiAccion());
 		
 
 		
@@ -103,9 +119,9 @@ public class VentanaControlXedoc extends JFrame{
 		panel2.add(jBxedoc1);
 		panel2.add(jBxedoc2);
 		panel2.add(jBbandeja1);
-		panel2.add(jBianus);
+	//	panel2.add(jBianus);
 		panel2.add(comboDiasCaptura);
-		panel2.add(jBprometeo);
+	//	panel2.add(jBprometeo);
 
 		panel2.add(jBpegarTitulo);
 		panel2.add(jBmaquetarXedoc1);
@@ -116,8 +132,14 @@ public class VentanaControlXedoc extends JFrame{
 		panel2.add(jBpdf1);
 		panel2.add(jBpdf2);
 
-		panel2.add(jBiniciarBandejas);
+		panel2.add(jBrecargarPrograma);
 		panel2.add(jBsalir);
+		
+		
+		panel2.add(sliderRetardos);
+		panel2.add(etiquetaRetardos);
+		
+		etiquetaRetardos.setFont(new Font("Arial", Font.BOLD, 16));
 		
 		Dispatch documento = Dispatch.call(InicioAltairJacob.bandejaXedoc,"document").getDispatch();
 		Dispatch row = Dispatch.call(documento, "getElementById","row").getDispatch();
@@ -462,7 +484,7 @@ public class VentanaControlXedoc extends JFrame{
 		//		System.out.println("Xedoc 1 visible... " + vis);
 				
 				if(vis){
-					new MaquetadoXedoc(InicioAltairJacob.xedoc1, "Xedoc 1", false, true);
+					new MaquetadoXedoc(InicioAltairJacob.xedoc1, "Xedoc 1", false, true, true);
 				}
 				else{
 					
@@ -471,7 +493,7 @@ public class VentanaControlXedoc extends JFrame{
 					
 					if(vis){
 				
-					new MaquetadoXedoc(InicioAltairJacob.xedoc2, "Xedoc 2", false, true);
+					new MaquetadoXedoc(InicioAltairJacob.xedoc2, "Xedoc 2", false, true, true);
 					}
 				}
 					
@@ -499,7 +521,7 @@ public class VentanaControlXedoc extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 					
-				new MaquetadoXedoc(InicioAltairJacob.xedoc2, "Xedoc 2", false, true);
+				new MaquetadoXedoc(InicioAltairJacob.xedoc2, "Xedoc 2", false, true, true);
 					
 				
 				/*
@@ -517,7 +539,7 @@ public class VentanaControlXedoc extends JFrame{
 			}
 		});
 		
-		jBrecargarArbol.setVisible(false);
+		jBrecargarArbol.setVisible(true);
 		jBrecargarArbol.setBackground(Color.cyan);
 		jBrecargarArbol.addActionListener(new ActionListener() {
 			
@@ -525,17 +547,22 @@ public class VentanaControlXedoc extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-				/*
-				WebDriver driver;
+				
+				
+				
+				
+				ActiveXComponent navegador;
 				
 				if(InicioAltairJacob.xedoc1Activo){
-					driver = InicioAltairJacob.driverBandejaXedoc;
+					navegador = InicioAltairJacob.xedoc1;
 				}
 				else{
-					driver = InicioAltairJacob.driverXedoc2;
+					navegador = InicioAltairJacob.xedoc2;
 				}
 				
+				XedocIndividualJacob.muestraNodosConsulta(navegador);
 				
+				/*
 				JavascriptExecutor js = (JavascriptExecutor) driver;
 				
 				
@@ -558,9 +585,9 @@ public class VentanaControlXedoc extends JFrame{
 		});
 		
 		
-		jBiniciarBandejas.setVisible(true);
-		jBiniciarBandejas.setBackground(Color.yellow);
-		jBiniciarBandejas.addActionListener(new ActionListener() {
+		jBrecargarPrograma.setVisible(true);
+		jBrecargarPrograma.setBackground(Color.yellow);
+		jBrecargarPrograma.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -583,9 +610,16 @@ public class VentanaControlXedoc extends JFrame{
 					InicioAltairJacob.ventana.dispose();
 				}
 				
+				String aux;
+				if(InicioAltairJacob.esChop){
+					aux = "CHOP";
+				}
+				else{
+					aux = "Salnés";
+				}
 				
 				String comando = "java -jar AltairJacob.jar " + InicioAltairJacob.user.getUsername() 
-						+ " " + InicioAltairJacob.user.getPassword();
+						+ " " + InicioAltairJacob.user.getPassword() + " " + aux ;
 				
 				try {
 					Runtime.getRuntime().exec(comando);
@@ -699,6 +733,7 @@ public class VentanaControlXedoc extends JFrame{
 		
 		setVisible(false);
 		
+		
 	}
 
 	
@@ -748,4 +783,18 @@ public class VentanaControlXedoc extends JFrame{
 	}
 	
 	
+	public class MiAccion implements ChangeListener{
+
+		public void stateChanged(ChangeEvent e){
+
+		int evaluo = sliderRetardos.getValue();
+
+		String retardo = Integer.toString(evaluo);
+
+		etiquetaRetardos.setText(retardo);
+		VentanaControlXedoc.RETARDO_INICIAL = evaluo;
+
+		}
+
+		} 
 }

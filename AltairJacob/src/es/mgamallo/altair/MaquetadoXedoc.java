@@ -27,16 +27,17 @@ public class MaquetadoXedoc {
 	
 	boolean errorDeContexto = false;
 	boolean maquetado;
-	
+	boolean manual = false;
 	/*
 	 * @param maquetado  Si es un maquetado manual. True.
 	 */
-	public MaquetadoXedoc(ActiveXComponent navegador, String nombreXedoc, boolean inicializarTanda, boolean maquetado){
+	public MaquetadoXedoc(ActiveXComponent navegador, String nombreXedoc, boolean inicializarTanda, boolean maquetado, boolean manual){
 		this.navegador = navegador;
 		this.nombreXedoc = nombreXedoc;
 		this.documento = Dispatch.call(navegador, "document").getDispatch();
 		this.numeroPantallas = InicioAltairJacob.numeroPantallas;
 		this.maquetado = maquetado;
+		this.manual = manual;
 	//	this.inicializaTanda = inicializarTanda;
 		
 		inicializaMaquetado();
@@ -468,7 +469,7 @@ public class MaquetadoXedoc {
 					
 					if(!errorDeContexto){
 						
-						xedoc.buscaNodo();
+						xedoc.buscaNodo(!manual);
 						try {
 		/*					Thread.sleep(100);
 							xedoc.seleccionarServicio();   */
@@ -1005,7 +1006,7 @@ public class MaquetadoXedoc {
 				
 				if(!errorDeContexto){
 					
-					xedoc.buscaNodo();
+					xedoc.buscaNodo(!manual);
 					try {
 						Thread.sleep(100);
 						xedoc.seleccionarServicio();

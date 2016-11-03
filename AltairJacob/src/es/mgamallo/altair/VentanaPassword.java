@@ -4,6 +4,9 @@ package es.mgamallo.altair;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 
 public class VentanaPassword extends javax.swing.JDialog {
@@ -13,13 +16,33 @@ public class VentanaPassword extends javax.swing.JDialog {
      */
 	
 	User usuarioSelenium;
+	boolean esChop;
 	
-    public VentanaPassword(String nombre, String usuario) {
+    public VentanaPassword(String nombre, String usuario, boolean esChop) {
     	this.nombreUsuario = nombre;
     	this.usuario = usuario;
+    	this.esChop = esChop;
         initComponents();
     }
 
+    
+    class Listener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			JRadioButton boton = (JRadioButton) e.getSource();
+			if(boton.getText().equals("CHOP")){
+				// JOptionPane.showMessageDialog(null, "CHop seleccionado");
+				esChop = true;
+			}
+			else{
+				// JOptionPane.showMessageDialog(null, "Salnes seleccionado");
+				esChop = false;
+			}
+		}
+    	
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,9 +64,13 @@ public class VentanaPassword extends javax.swing.JDialog {
         botonAceptar = new javax.swing.JButton();
         botonCancelar = new javax.swing.JButton();
 
+        grupoRadioBotones = new ButtonGroup();
+        radioBotonChop = new JRadioButton("CHOP",esChop);
+        radioBotonSalnes = new JRadioButton("Salnés",!esChop);
+        
         
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(290, 300));
+        setPreferredSize(new java.awt.Dimension(290, 330));
         setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(200, 100));
@@ -65,6 +92,14 @@ public class VentanaPassword extends javax.swing.JDialog {
         campoPassword.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         campoPassword.setToolTipText("");
 
+        grupoRadioBotones.add(radioBotonChop);
+        grupoRadioBotones.add(radioBotonSalnes);
+        
+        Listener listener = new Listener();
+        
+        radioBotonChop.addActionListener(listener);
+        radioBotonSalnes.addActionListener(listener);
+        
         botonAceptar.setText("Aceptar");
         botonAceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -105,7 +140,12 @@ public class VentanaPassword extends javax.swing.JDialog {
                             .addComponent(labelUsuario)
                             .addComponent(campoUsuario)
                             .addComponent(labelPassword)
-                            .addComponent(campoPassword))))
+                            .addComponent(campoPassword)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(radioBotonChop, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(radioBotonSalnes, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    )))
                 .addContainerGap(170, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -123,7 +163,11 @@ public class VentanaPassword extends javax.swing.JDialog {
                 .addComponent(labelPassword)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(campoPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addGap(15, 15, 15)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radioBotonChop)
+                    .addComponent(radioBotonSalnes))
+                .addGap(15, 15, 15)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonAceptar)
                     .addComponent(botonCancelar))
@@ -202,11 +246,13 @@ public class VentanaPassword extends javax.swing.JDialog {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaPassword("USUARIO","").setVisible(true);
+                new VentanaPassword("USUARIO","",true).setVisible(true);
             }
         });
     }
 
+    
+    
     // Variables declaration - do not modify                     
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
@@ -219,6 +265,11 @@ public class VentanaPassword extends javax.swing.JDialog {
     private javax.swing.JLabel labelUsuario;
     private String nombreUsuario;
     private String usuario;
+    
+    private ButtonGroup grupoRadioBotones;
+    private JRadioButton radioBotonChop;
+    private JRadioButton radioBotonSalnes;
+    
     // End of variables declaration                   
 }
 

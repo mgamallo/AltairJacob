@@ -29,7 +29,7 @@ public class HiloMaquetadoInicio extends Thread {
 				 try {
 					System.out.println("Empieza el hilo de " + nombreXedoc); 
 					
-					new MaquetadoXedoc(navegador, nombreXedoc, inicializarTanda, false);
+					new MaquetadoXedoc(navegador, nombreXedoc, inicializarTanda, false, false);
 	
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

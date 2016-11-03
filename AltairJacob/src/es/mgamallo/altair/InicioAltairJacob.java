@@ -5,6 +5,8 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
@@ -49,6 +51,13 @@ public class InicioAltairJacob {
 	public static String nombrePdfXedoc2 = "";
 	
 	public static User user;
+	public static boolean esChop;
+	public static final String CODIGO_CHOP = "360340";
+	public static final String CODIGO_SALNES = "360353";
+	public static final String VALOR_CHOP = "HC_CHOPO";
+	public static final String VALOR_SALNES = "HC_SAL";
+	
+	public static String codigoCentro = "";
 	
 	public static String[][] tablaDocumentos;
 	
@@ -247,8 +256,35 @@ public class InicioAltairJacob {
 		// Dispatch.put(centro, "value", "HC_CHOPO");
 		 
 		 Dispatch opciones = Dispatch.call(centro, "getElementsByTagName","option").getDispatch();
-		 // System.out.println(Dispatch.call(opciones,"length").toString());
-		 Dispatch centroSel = Dispatch.call(opciones,"7").getDispatch();
+		 // System.out.println(Dispatch.call(opciones,"length").toString());´
+		 
+		 int numero = Integer.valueOf(Dispatch.call(opciones,"length").toString());
+		 
+		 Dispatch centroSel = null;
+		 
+		 for(int i=0;i<numero;i++){
+			 Dispatch opcion = Dispatch.call(opciones,String.valueOf(i)).getDispatch();
+			 String valor = Dispatch.get(opcion,"value").getString();
+			 System.out.println(Dispatch.get(opcion,"value"));
+			 
+			 if(esChop && valor.equals(VALOR_CHOP)){
+				 centroSel  = Dispatch.call(opciones,String.valueOf(i)).getDispatch();
+				 break;
+			 }
+			 else if(!esChop && valor.equals(VALOR_SALNES)){
+				 centroSel  = Dispatch.call(opciones,String.valueOf(i)).getDispatch();
+				 break;
+			 }
+		 }
+		 
+/*		 
+		 if(esChop){
+			 centroSel  = Dispatch.call(opciones,"14").getDispatch();
+		 }
+		 else{
+			 centroSel  = Dispatch.call(opciones,"15").getDispatch();
+		 }
+*/		 
 		// System.out.println(Dispatch.get(centroSel,"value"));
 		 Dispatch.put(centroSel,"selected","true");
 		 
@@ -440,17 +476,33 @@ public class InicioAltairJacob {
 		if(args.length == 0){
 			System.out.println("No hay argumentos....");
 			
-			VentanaPassword vPassword = new VentanaPassword("USUARIO", "");
+			VentanaPassword vPassword = new VentanaPassword("USUARIO", "",true);
 			vPassword.setVisible(true);
 			usuario = vPassword.usuarioSelenium.getUsername();
 			pass = vPassword.usuarioSelenium.getPassword();
+			esChop = vPassword.esChop;
+			if(esChop){
+				codigoCentro = CODIGO_CHOP;
+			}
+			else{
+				codigoCentro = CODIGO_SALNES;
+			}
 			
 		//	usuario = "asanagu1";
 		//	pass = "coke2511";
 		}
-		else if(args.length == 2){
+		else if(args.length == 3){
 			usuario = args[0];
 			pass = args[1];
+			String aux = args[2];
+			if(aux.equals("CHOP")){
+				esChop = true;
+				codigoCentro = CODIGO_CHOP;
+			}
+			else{
+				esChop = false;
+				codigoCentro = CODIGO_SALNES;
+			}
 		}
 
 		
@@ -459,6 +511,8 @@ public class InicioAltairJacob {
 		new CapturaRatonYTeclado();
 		
 		capturaWebs();
+		
+	//	JOptionPane.showMessageDialog(null, esChop );
 		
 		cargaUsuarioXedoc(bandejaXedoc, RUTAXEDOC);
 		cargaUsuarioXedoc(xedoc2, RUTAXEDOC);

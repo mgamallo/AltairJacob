@@ -190,7 +190,7 @@ public class XedocIndividualJacob {
 	}
 	
 	
-	public void buscaNodo(){
+	public void buscaNodo(boolean auto){
 		
 		String id = "";
 	
@@ -216,16 +216,16 @@ public class XedocIndividualJacob {
 			id = servicio;
 		}
 
-		
+		if(auto){
 		// Resalta nombre paciente
-		Dispatch nodoLin = Dispatch.call(documento, "getElementById","360340-14--" + nhc).toDispatch();
-		Dispatch nodosAn = Dispatch.call(nodoLin, "getElementsByTagName","a").toDispatch();
-		Dispatch nodoAn = Dispatch.get(nodosAn,"0").toDispatch();
-		Dispatch nodoAnEstilo = Dispatch.get(nodoAn,"style").toDispatch();
-		Dispatch.put(nodoAnEstilo,"color","green");
-		Dispatch.put(nodoAnEstilo,"font-weight","bolder");
-		Dispatch.put(nodoAnEstilo,"font-size","14px");
-		
+			Dispatch nodoLin = Dispatch.call(documento, "getElementById",InicioAltairJacob.codigoCentro + "-14--" + nhc).toDispatch();
+			Dispatch nodosAn = Dispatch.call(nodoLin, "getElementsByTagName","a").toDispatch();
+			Dispatch nodoAn = Dispatch.get(nodosAn,"0").toDispatch();
+			Dispatch nodoAnEstilo = Dispatch.get(nodoAn,"style").toDispatch();
+			Dispatch.put(nodoAnEstilo,"color","green");
+			Dispatch.put(nodoAnEstilo,"font-weight","bolder");
+			Dispatch.put(nodoAnEstilo,"font-size","14px");
+		}
 	//	System.out.println(id);
 		
 		if(id.equals("HOS") || id.equals("URG") || id.equals("QUI")){
@@ -331,7 +331,7 @@ public class XedocIndividualJacob {
 				String cadena = "";
 				
 				id = servicio + "-noSeleccionable-rama";
-				String idConsultaGeneral = "360340-1-2-" + servicio;
+				String idConsultaGeneral = InicioAltairJacob.codigoCentro + "-1-2-" + servicio;
 				
 				System.out.println("  " + idConsultaGeneral);
 				System.out.println("  " + tipoSubida);
@@ -659,7 +659,7 @@ public class XedocIndividualJacob {
 							+ "case 'q': var index2 = cadena.indexOf('-');servicio = cadena.slice(index2-4,index2);break;"
 							+ "case 'c': var padre = nodo.parentNode;"
 										+ "var cadenaPadre = padre.id;"
-										+ "if(cadenaPadre.search('360340-1-2') != -1){"
+										+ "if(cadenaPadre.search('" + InicioAltairJacob.codigoCentro + "-1-2') != -1){"
 											+ "servicio = cadenaPadre.slice(-4);"
 											+ "if(servicio[0] == '-'){"
 												+ "servicio = servicio.slice(1);"
@@ -669,7 +669,7 @@ public class XedocIndividualJacob {
 											+ "var abuelo = padre.parentNode;"
 											+ "var tatarabuelo = abuelo.parentNode;"
 											+ "cadenaPadre = tatarabuelo.id;"
-											+ "if(cadenaPadre.localeCompare('360340-1-2') != -1){"
+											+ "if(cadenaPadre.localeCompare('" + InicioAltairJacob.codigoCentro + "-1-2') != -1){"
 												+ "servicio = cadenaPadre.slice(0,4);"
 												+ "if(servicio[0] == '-'){"
 													+ "servicio = servicio.slice(1);"
@@ -832,7 +832,7 @@ public class XedocIndividualJacob {
 							+ "else if(tipoNodo.localeCompare('c') == 0){"
 								+ "var padre = nodoAncla.parentNode;"
 								+ "var cadenaPadre = padre.id;"
-								+ "if(cadenaPadre.search('360340-1-2') != -1){"
+								+ "if(cadenaPadre.search('" + InicioAltairJacob.codigoCentro + "-1-2') != -1){"
 									+ "servicio = cadenaPadre.slice(-4);"
 									+ "if(servicio[0] == '-'){"
 											+ "servicio = servicio.slice(1);"
@@ -845,7 +845,7 @@ public class XedocIndividualJacob {
 									+ "var tatarabuelo = abuelo.parentNode;"
 									+ "cadenaPadre = tatarabuelo.id;"
 								//	+ "comentario.innerHTML = comentario.innerHTML + ' este es el id del abuelo... ' + cadenaPadre;"
-									+ "if(cadenaPadre.localeCompare('360340-1-2') != -1){"
+									+ "if(cadenaPadre.localeCompare('" + InicioAltairJacob.codigoCentro + "-1-2') != -1){"
 										+ "servicio = cadenaPadre.slice(0,4);"
 										+ "if(servicio[0] == '-'){"
 											+ "servicio = servicio.slice(1);"
@@ -985,7 +985,7 @@ public class XedocIndividualJacob {
 							+ "else if(tipoNodo.localeCompare('c') == 0){"
 								+ "var padre = nodoAncla.parentNode;"
 								+ "var cadenaPadre = padre.id;"
-								+ "if(cadenaPadre.search('360340-1-2') != -1){"
+								+ "if(cadenaPadre.search('" + InicioAltairJacob.codigoCentro + "-1-2') != -1){"
 									+ "servicio = cadenaPadre.slice(-4);"
 									+ "if(servicio[0] == '-'){"
 											+ "servicio = servicio.slice(1);"
@@ -995,7 +995,7 @@ public class XedocIndividualJacob {
 									+ "var abuelo = padre.parentNode;"
 									+ "var tatarabuelo = abuelo.parentNode;"
 									+ "cadenaPadre = tatarabuelo.id;"
-									+ "if(cadenaPadre.localeCompare('360340-1-2') != -1){"
+									+ "if(cadenaPadre.localeCompare('" + InicioAltairJacob.codigoCentro + "-1-2') != -1){"
 										+ "servicio = cadenaPadre.slice(0,4);"
 										+ "if(servicio[0] == '-'){"
 											+ "servicio = servicio.slice(1);"
@@ -1431,6 +1431,28 @@ public class XedocIndividualJacob {
 			}
 			
 		}
+		
+		
+		static public void muestraNodosConsulta(ActiveXComponent xedoc){
+			
+			Dispatch documento = Dispatch.call(xedoc, "document").getDispatch();
+			Dispatch consultas = Dispatch.call(documento, "getElementById","OTROS-noSeleccionable-rama").toDispatch();
+			Dispatch listaConsultas = Dispatch.call(consultas, "getElementsByTagname","li").toDispatch();
+			
+			int numListas = Integer.valueOf(Dispatch.get(listaConsultas, "length").toString());
+			
+			int j=0;
+			for(int i=0;i<numListas;i++){
+				Dispatch consulta = Dispatch.get(listaConsultas, String.valueOf(i)).toDispatch();
+				
+				Dispatch consultaEstilo = Dispatch.get(consulta, "style").toDispatch();
+				Dispatch.put(consultaEstilo, "display", "block");
+
+			}
+		}
+		
+		
+		
 		
 		public void getFocus(){
 			

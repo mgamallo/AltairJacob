@@ -326,7 +326,8 @@ public class GestionXedoc {
 					+ "fechaF.value = '" + fechaFin + "';"
 					//+ "alert('En medio de la carga de contexto');"
 					+ "document.getElementById('submitFormContexto').click();"
-					+ "var claveEntera = nhc + '-360340';"
+					+ "var claveEntera = nhc + '-" + InicioAltairJacob.codigoCentro + "';"
+				//	+ "alert(claveEntera);"
 					+ ""
 					+ "var numCiclos = 0;"
 					+ "var intervalo = setInterval(ciclos,1100);"
@@ -677,7 +678,7 @@ public class GestionXedoc {
 							+ "fechaF.value = '" + fechaFin + "';"
 							//+ "alert('En medio de la carga de contexto');"
 							+ "document.getElementById('submitFormContexto').click();"
-							+ "var claveEntera = nhcElement.value + '-360340';"
+							+ "var claveEntera = nhcElement.value + '-" + InicioAltairJacob.codigoCentro + "';"
 							+ ""
 							+ "var numCiclos = 0;"
 							+ "var intervalo = setInterval(ciclos,1100);"
@@ -722,13 +723,13 @@ public class GestionXedoc {
 					driver.findElement(By.id("arbol"));
 		*/			
 					try {
-						Thread.sleep(3500);
+						Thread.sleep(VentanaControlXedoc.RETARDO_INICIAL);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
-					new MaquetadoXedoc(navegador, nombreXedoc, false, false);
+					new MaquetadoXedoc(navegador, nombreXedoc, false, false, false);
 					
 					
 				}
